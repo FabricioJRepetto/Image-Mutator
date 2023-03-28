@@ -13,12 +13,11 @@ export interface pixelData {
 
 export interface configObject {
     res: number,
-    style: 'dots' | 'ascii',
-    invertSize: boolean,
-    containedDots: boolean
+    style: string,
+    invert: boolean,
+    containedDots: boolean,
     margin: boolean,
     background: string,
     //: TODO: refact
-    size: number,
     fontSize: number
 }

@@ -40,9 +40,9 @@ export const toDots = (average: number, res: number, containedDots: boolean): nu
 }
 
 export const scanner = (
-    imgData: imageData,
+    imgData: ImageData,
     res: number,
-    invertSize: boolean
+    invert: boolean
 ): Array<pixelData> => {
 
     const {
@@ -60,7 +60,7 @@ export const scanner = (
                 r = data[pos],
                 g = data[pos + 1],
                 b = data[pos + 2],
-                average = invertSize ? 255 - ((r + g + b) / 3) : (r + g + b) / 3,
+                average = invert ? 255 - ((r + g + b) / 3) : (r + g + b) / 3,
                 rgb = `rgb(${r}, ${g}, ${b})`
 
             imageToArray.push({
@@ -89,7 +89,6 @@ export const printer = (canvas: HTMLCanvasElement, imgData: Array<pixelData>, co
         background,
         containedDots,
         margin,
-        size,
         fontSize
     } = config
 
@@ -118,7 +117,7 @@ export const printer = (canvas: HTMLCanvasElement, imgData: Array<pixelData>, co
 
         default:
             //? fonts: Courier Prime / Inconsolata
-            cntx.font = Math.round(Math.round(res * (size ? size : fontSize))) + 'px Inconsolata'
+            cntx.font = Math.round(Math.round(res * fontSize)) + 'px Inconsolata'
 
             setBluePrint(toText(imgData, Math.round(canvas.width / res))) //? ascii text version
 
