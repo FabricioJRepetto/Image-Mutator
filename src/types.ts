@@ -16,8 +16,7 @@ export interface configObject {
     style: string,
     invert: boolean,
     containedDots: boolean,
-    margin: boolean,
-    background: string,
+    background: string | null,
     //: TODO: refact
     fontSize: number
 }

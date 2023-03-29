@@ -1,23 +1,25 @@
 import { useRef, useState } from 'react'
-import { printer, scanner } from './utils'
+import { printer } from './mutator/printer'
+import { scanner } from './mutator/scanner'
 import './App.css'
 
 function App() {
     const canvas = useRef<HTMLCanvasElement>(null)
 
-    const [loading, setLoading] = useState<boolean>(false)
     const [imgData, setImgData] = useState<ImageData | null>()
     const [style, setStyle] = useState<string>('dots')
     const [res, setRes] = useState<number>(5)
+    const [background, setBackground] = useState<string | null>(null)
     const [containedDots, setContainedDots] = useState<boolean>(true)
+    const [invert, setInvert] = useState<boolean>(false)
     const [fontSize, setFontSize] = useState<number>(1)
     const [showText, setShowText] = useState<boolean>(false)
     const [bluePrint, setBluePrint] = useState<Array<string> | null>(null)
-    const [invert, setInvert] = useState<boolean>(false)
     const [double, setDouble] = useState<boolean>(false)
+    const [brighter, setBrighter] = useState<boolean>(true)
 
     const loadImage = (files: FileList | null): void => {
-        if (files) {
+        if (files && files[0]) {
             const file = files[0]
             const img = new Image()
 
@@ -56,7 +58,11 @@ function App() {
     }
 
     const mutate = (): void => {
-        if (!imgData) return
+        if (!imgData || !canvas.current) return
+        const cntx = canvas.current.getContext('2d')
+
+        if (!cntx) return
+        cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
 
         const config = {
             res,
@@ -66,20 +72,30 @@ function App() {
             fontSize,
             //: TODO: refact
             margin: false,
-            background: '#FFF'
+            background
         }
 
-        const data = scanner(imgData, res, invert)
+        const data = scanner(imgData, res)
+
         if (data && canvas.current) {
+
             if (!double) {
                 printer(canvas.current, data, config, setBluePrint)
             } else {
-                printer(canvas.current, data, config, setBluePrint)
+                //: TODO: probar desactivando el tamaño de dots
+                // dark tones
+                printer(canvas.current, data, { ...config, invert: true, containedDots: true }, setBluePrint)
+
+                // bright tones
+                printer(canvas.current, data, { ...config, invert: false, containedDots: brighter, background: null }, setBluePrint)
             }
         }
     }
 
     const reset = (): void => {
+        const inpt = document.getElementById('fileinput')
+        console.log(inpt);
+
         if (canvas.current) {
             const cntx = canvas.current.getContext('2d')
             if (!cntx) {
@@ -91,8 +107,11 @@ function App() {
             canvas.current.width = 300
         }
         setImgData(() => null)
+        setBackground(() => null)
         setShowText(() => false)
         setBluePrint(() => null)
+        setDouble(() => false)
+        setBrighter(() => false)
     }
 
     return (
@@ -102,10 +121,9 @@ function App() {
             </header>
 
             <canvas ref={canvas} className='canvas'></canvas>
-            {loading && <h1>···LOADING···</h1>}
 
             <div>
-                <input type="file" onChange={(e) => loadImage(e.target.files)}></input>
+                <input type="file" id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
             </div>
 
             <div>
@@ -120,10 +138,25 @@ function App() {
                 <input type="range" min={1} max={150} defaultValue={5} onChange={(e) => setRes(parseInt(e.target.value))}></input>
             </div>
 
+            <div>
+                <p>Background: {background || 'transparent'}</p>
+                <input type="color" onChange={(e) => setBackground(e.target.value)}></input>
+                <button onClick={() => setBackground(null)}>transparent</button>
+            </div>
+
             {style === 'dots' &&
                 <>
                     <label htmlFor="limitDots">limit dot size</label>
-                    <input type="checkbox" name="limitDots" id="limitDots" defaultChecked onChange={() => setContainedDots(() => !containedDots)}></input>
+                    <input type="checkbox" name="limitDots" id="limitDots" defaultChecked disabled={double} onChange={() => setContainedDots(() => !containedDots)}></input>
+                    <br />
+                    <label htmlFor="double">Double pass: {double ? 'yes' : 'no'}</label>
+                    <input type="checkbox" name="double" id="double" onChange={() => setDouble(current => !current)}></input>
+                    <br />
+                    {double && <>
+                        <label htmlFor="brighter">Brighter: {brighter ? 'no' : 'yes'}</label>
+                        <input type="checkbox" name="brighter" id="brighter" onChange={() => setBrighter(current => !current)}></input>
+                        <br />
+                    </>}
                 </>}
 
             {style === 'ascii' &&
@@ -139,14 +172,9 @@ function App() {
             <div>
                 <>
                     <label htmlFor="invert">Invert: {invert ? 'yes' : 'no'}</label>
-                    <input type="checkbox" name="invert" id="invert" onChange={() => setInvert(current => !current)}></input>
+                    <input disabled={double} type="checkbox" name="invert" id="invert" onChange={() => setInvert(current => !current)}></input>
                     <br />
-                    <label htmlFor="invert">Double pass: {double ? 'yes' : 'no'}</label>
-                    <input type="checkbox" name="invert" id="invert" onChange={() => setDouble(current => !current)}></input>
-                    <br />
-                    {/* <label htmlFor="margin">Margin: {margin ? 'yes' : 'no'}</label>
-                    <input type="checkbox" name="margin" id="margin" onChange={() => setMargin(() => !margin)}></input>
-                    <br /> */}
+
                 </>
                 <button onClick={mutate} disabled={!imgData}>MUTATE</button>
                 <button onClick={reset} disabled={!imgData}>RESET</button>
