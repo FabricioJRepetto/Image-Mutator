@@ -2,9 +2,14 @@ import { useRef, useState } from 'react'
 import { printer } from './mutator/printer'
 import { scanner } from './mutator/scanner'
 import './App.css'
+import { testgif } from './mutator/giftest'
 
 function App() {
     const canvas = useRef<HTMLCanvasElement>(null)
+
+    const [gifFile, setGifFile] = useState<File>()
+
+    const [loading, setLoading] = useState<boolean>(false)
 
     const [imgData, setImgData] = useState<ImageData | null>()
     const [style, setStyle] = useState<string>('dots')
@@ -57,7 +62,9 @@ function App() {
         // print(size)
     }
 
-    const mutate = (): void => {
+    const mutate = async (): Promise<void> => {
+        setLoading(true)
+
         if (!imgData || !canvas.current) return
         const cntx = canvas.current.getContext('2d')
 
@@ -75,22 +82,24 @@ function App() {
             background
         }
 
-        const data = scanner(imgData, res)
+        const data = await scanner(imgData, res)
 
         if (data && canvas.current) {
 
             if (!double) {
-                printer(canvas.current, data, config, setBluePrint)
+                await printer(canvas.current, data, config, setBluePrint)
             } else {
                 //: TODO: probar desactivando el tamaño de dots
                 // dark tones
-                printer(canvas.current, data, { ...config, invert: true, containedDots: true }, setBluePrint)
+                await printer(canvas.current, data, { ...config, invert: true, containedDots: true }, setBluePrint)
 
                 // bright tones
-                printer(canvas.current, data, { ...config, invert: false, containedDots: brighter, background: null }, setBluePrint)
+                await printer(canvas.current, data, { ...config, invert: false, containedDots: brighter, background: null }, setBluePrint)
             }
         }
+        setLoading(false)
     }
+
 
     const reset = (): void => {
         const inpt = document.getElementById('fileinput')
@@ -114,16 +123,71 @@ function App() {
         setBrighter(() => false)
     }
 
+    const loadGif = (files: FileList | null): void => {
+        if (files && files[0]) {
+            const file = files[0]
+            setGifFile(() => file)
+        }
+    }
+
+    const mutateGif = async (): Promise<void> => {
+        if (!gifFile) return
+
+        const gifData = await testgif(gifFile)
+
+        if (gifData) {
+            const frame = gifData[15]
+            console.log(frame);
+
+            const imgData = {
+                width: frame.dims.width,
+                height: frame.dims.height,
+                data: frame.patch
+            }
+
+            const data = await scanner(imgData, res)
+
+            if (!imgData || !canvas.current) return
+
+            canvas.current.width = imgData.width
+            canvas.current.height = imgData.height
+            const cntx = canvas.current.getContext('2d')
+
+            if (!cntx) return
+            cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
+
+            const config = {
+                res,
+                style,
+                invert,
+                containedDots,
+                fontSize,
+                //: TODO: refact
+                margin: false,
+                background
+            }
+
+            await printer(canvas.current, data, config, setBluePrint)
+        }
+    }
+
     return (
         <div className="App">
             <header className="App-header">
                 <h1>Image mutator</h1>
+                <p>{loading ? `[[[ CARGANDO ]]]` : `( STAND BY )`}</p>
             </header>
 
             <canvas ref={canvas} className='canvas'></canvas>
 
             <div>
+                <p>Imagen</p>
                 <input type="file" id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
+            </div>
+
+            <div>
+                <p>Gif</p>
+                <input type="file" id='fileinput' onChange={(e) => loadGif(e.target.files)}></input>
             </div>
 
             <div>
@@ -135,7 +199,7 @@ function App() {
 
             <div>
                 <p>Resolution: {res}{imgData && <i> ({Math.ceil(imgData.width / res)} per row)</i>}</p>
-                <input type="range" min={1} max={150} defaultValue={5} onChange={(e) => setRes(parseInt(e.target.value))}></input>
+                <input type="range" min={1} max={15} defaultValue={5} onChange={(e) => setRes(parseInt(e.target.value))}></input>
             </div>
 
             <div>
@@ -177,6 +241,7 @@ function App() {
 
                 </>
                 <button onClick={mutate} disabled={!imgData}>MUTATE</button>
+                <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
                 <button onClick={reset} disabled={!imgData}>RESET</button>
             </div>
 

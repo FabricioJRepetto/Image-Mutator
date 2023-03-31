@@ -1,64 +1,69 @@
 import { configObject, pixelData } from "../types";
 import { toChar, toDots, toText } from "./utils";
 
-export const printer = (
+export const printer = async (
     canvas: HTMLCanvasElement,
     imgData: Array<pixelData>,
     config: configObject,
     setBluePrint: (bluePrint: Array<string>) => void
-): void => {
-    const cntx = canvas.getContext('2d')
-    if (!cntx) {
-        console.error('Context cannot be null');
-        return
-    }
+): Promise<void> => {
+    await new Promise((resolve, reject) => {
 
-    const {
-        res,
-        style,
-        background,
-        invert,
-        containedDots,
-        fontSize
-    } = config
+        const cntx = canvas.getContext('2d')
+        if (!cntx) {
+            console.error('Context cannot be null');
+            reject(false)
+            return
+        }
 
-    const average = (avg: number): number => {
-        const aux = invert ? 255 - avg : avg
-        return aux
-    }
+        const {
+            res,
+            style,
+            background,
+            invert,
+            containedDots,
+            fontSize
+        } = config
 
-    if (background) {
-        cntx.fillStyle = background;
-        cntx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+        const average = (avg: number): number => {
+            const aux = invert ? 255 - avg : avg
+            return aux
+        }
 
-    switch (style) {
-        case 'dots':
-            imgData.forEach(e => {
-                const circle = new Path2D(),
-                    X = e.x + Math.round(res / 2), // e.x + Math.round(res / 2) // e.x + res * 1.7
-                    Y = e.y + Math.round(res / 2), // e.y - dotSize * 2.5 // e.y + res * 1.7
-                    dotSize = toDots(average(e.average), res, containedDots)
+        if (background) {
+            cntx.fillStyle = background;
+            cntx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
-                circle.arc(X, Y, dotSize, 0, 2 * Math.PI);
-                cntx.fillStyle = e.color
-                cntx.fill(circle)
-            })
-            break;
+        switch (style) {
+            case 'dots':
+                imgData.forEach(e => {
+                    const circle = new Path2D(),
+                        X = e.x + Math.round(res / 2), // e.x + Math.round(res / 2) // e.x + res * 1.7
+                        Y = e.y + Math.round(res / 2), // e.y - dotSize * 2.5 // e.y + res * 1.7
+                        dotSize = toDots(average(e.average), res, containedDots)
 
-        default:
-            //? fonts: Courier Prime / Inconsolata
-            cntx.font = Math.round(Math.round(res * fontSize)) + 'px Inconsolata'
+                    circle.arc(X, Y, dotSize, 0, 2 * Math.PI);
+                    cntx.fillStyle = e.color
+                    cntx.fill(circle)
+                })
+                break;
 
-            setBluePrint(toText(imgData, Math.round(canvas.width / res)))
+            default:
+                //? fonts: Courier Prime / Inconsolata
+                cntx.font = Math.round(Math.round(res * fontSize)) + 'px Inconsolata'
 
-            imgData.forEach(e => {
-                cntx.fillStyle = e.color
-                cntx.fillText(
-                    toChar(average(e.average)),
-                    e.x,
-                    e.y + Math.round(res))
-            })
-            break;
-    }
+                setBluePrint(toText(imgData, Math.round(canvas.width / res)))
+
+                imgData.forEach(e => {
+                    cntx.fillStyle = e.color
+                    cntx.fillText(
+                        toChar(average(e.average)),
+                        e.x,
+                        e.y + Math.round(res))
+                })
+                break;
+        }
+        resolve(true)
+    })
 }

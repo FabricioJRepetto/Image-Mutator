@@ -1,15 +1,16 @@
 import { pixelData } from "../types"
 
-export const scanner = (
-    imgData: ImageData,
+export const scanner = async (
+    imgData: ImageData | any,
     res: number
-): Array<pixelData> => {
+): Promise<Array<pixelData>> => {
 
     const {
         width,
         height,
         data
     } = imgData
+
     let imageToArray: Array<pixelData> = []
 
     for (let y = 0; y < height; y += res) {
@@ -20,14 +21,15 @@ export const scanner = (
                 r = data[pos],
                 g = data[pos + 1],
                 b = data[pos + 2],
+                a = data[pos + 3],
                 average = (r + g + b) / 3,
-                rgb = `rgb(${r}, ${g}, ${b})`
+                rgba = `rgba(${r}, ${g}, ${b}, ${a})`
 
             imageToArray.push({
                 x,
                 y,
                 average,
-                color: rgb
+                color: rgba
             })
         }
     }
