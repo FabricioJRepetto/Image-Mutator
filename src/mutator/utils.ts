@@ -32,9 +32,9 @@ export const toDots = (average: number, res: number, containedDots: boolean): nu
     // (average * 100) / 255 = tamaño relativo al brillo (regla de 3)
     // / 100 = tamaño convertido a porcentaje
     // res * porcentaje = tamaño del circulo en pixeles
-    let aux = Math.floor((res * (((average * 100) / 255)) / 100))
+    let aux = Math.round((res * (((average * 100) / 255)) / 100))
     // / 2 = limitar el tamaño del circulo dentro de la casilla
     if (containedDots && aux > (res / 2)) {
-        return aux / 2
+        return res / 2
     } else return aux
 }

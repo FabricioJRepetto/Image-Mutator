@@ -10,6 +10,7 @@ export const scanner = async (
         height,
         data
     } = imgData
+    // console.log(imgData.data);
 
     let imageToArray: Array<pixelData> = []
 
@@ -18,12 +19,12 @@ export const scanner = async (
             const posX = x * 4,
                 posY = y * 4,
                 pos = (posY * width) + posX,
-                r = data[pos],
-                g = data[pos + 1],
-                b = data[pos + 2],
+                r = data[pos] || 1,
+                g = data[pos + 1] || 1,
+                b = data[pos + 2] || 1,
                 a = data[pos + 3],
                 average = (r + g + b) / 3,
-                rgba = `rgba(${r}, ${g}, ${b}, ${a})`
+                rgba = `rgba(${r}, ${g}, ${b}, ${a === 0 ? 0 : 1})`
 
             imageToArray.push({
                 x,

@@ -7,7 +7,7 @@ import { testgif } from './mutator/giftest'
 function App() {
     const canvas = useRef<HTMLCanvasElement>(null)
 
-    const [gifFile, setGifFile] = useState<File>()
+    const [gifFile, setGifFile] = useState<File | null>()
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -102,11 +102,8 @@ function App() {
 
 
     const reset = (): void => {
-        const inpt = document.getElementById('fileinput')
-        console.log(inpt);
-
         if (canvas.current) {
-            const cntx = canvas.current.getContext('2d')
+            const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
             if (!cntx) {
                 console.error('Context is null');
                 return
@@ -115,6 +112,8 @@ function App() {
             canvas.current.height = 150
             canvas.current.width = 300
         }
+        setGifFile(() => null)
+
         setImgData(() => null)
         setBackground(() => null)
         setShowText(() => false)
@@ -131,30 +130,22 @@ function App() {
     }
 
     const mutateGif = async (): Promise<void> => {
-        if (!gifFile) return
+        if (!gifFile || !canvas.current) return
 
         const gifData = await testgif(gifFile)
+        // console.log(gifData);
 
         if (gifData) {
-            const frame = gifData[15]
-            console.log(frame);
+            const styledFrames: Array<ImageData> = [],
+                WIDTH = gifData[0].dims.width,
+                HEIGHT = gifData[0].dims.height,
+                DELAY = gifData[0].delay
 
-            const imgData = {
-                width: frame.dims.width,
-                height: frame.dims.height,
-                data: frame.patch
-            }
+            canvas.current.width = WIDTH
+            canvas.current.height = HEIGHT
 
-            const data = await scanner(imgData, res)
-
-            if (!imgData || !canvas.current) return
-
-            canvas.current.width = imgData.width
-            canvas.current.height = imgData.height
-            const cntx = canvas.current.getContext('2d')
-
+            const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
             if (!cntx) return
-            cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
 
             const config = {
                 res,
@@ -167,7 +158,77 @@ function App() {
                 background
             }
 
-            await printer(canvas.current, data, config, setBluePrint)
+            for (let i = 0; i < gifData.length; i++) {
+                const frame = gifData[i];
+                const imgData = {
+                    width: WIDTH,
+                    height: HEIGHT,
+                    data: frame.patch
+                }
+
+                if (frame.pixels.length) {
+                    //? 1: scan frame
+                    const data = await scanner(imgData, res)
+
+                    //? 2: clear canvas
+                    cntx.clearRect(0, 0, WIDTH, HEIGHT)
+
+                    //? 3: print styled
+                    await printer(canvas.current, data, config, setBluePrint)
+
+                    //? 4: get styled frame
+                    const styledFrame = cntx.getImageData(0, 0, WIDTH, HEIGHT)
+
+                    //? 5: save new frame
+                    styledFrames.push(styledFrame)
+                }
+
+            }
+            // console.log(styledFrames);
+
+            //? 6: compilar gif
+            let i = 0
+            setInterval(() => {
+                cntx.clearRect(0, 0, WIDTH, HEIGHT)
+                cntx.putImageData(styledFrames[i], 0, 0)
+                i++
+                if (i === styledFrames.length) i = 0
+            }, Math.floor(DELAY))
+
+            //________________________________________________________________
+
+            // const frame = gifData[15]
+            // console.log(frame);
+
+            // const imgData = {
+            //     width: frame.dims.width,
+            //     height: frame.dims.height,
+            //     data: frame.patch
+            // }
+
+            // const data = await scanner(imgData, res)
+
+            // if (!imgData || !canvas.current) return
+
+            // canvas.current.width = imgData.width
+            // canvas.current.height = imgData.height
+            // const cntx = canvas.current.getContext('2d')
+
+            // if (!cntx) return
+            // cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
+
+            // const config = {
+            //     res,
+            //     style,
+            //     invert,
+            //     containedDots,
+            //     fontSize,
+            //     //: TODO: refact
+            //     margin: false,
+            //     background
+            // }
+
+            // await printer(canvas.current, data, config, setBluePrint)
         }
     }
 
@@ -242,7 +303,7 @@ function App() {
                 </>
                 <button onClick={mutate} disabled={!imgData}>MUTATE</button>
                 <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
-                <button onClick={reset} disabled={!imgData}>RESET</button>
+                <button onClick={reset} >RESET</button>
             </div>
 
             <div className='ascciContainer'>
