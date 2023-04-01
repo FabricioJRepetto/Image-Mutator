@@ -38,3 +38,18 @@ export const toDots = (average: number, res: number, containedDots: boolean): nu
         return res / 2
     } else return aux
 }
+
+export const download = (buf: Blob, filename: string, type: any): { url: string, download: string } => {
+    const blob = buf instanceof Blob ? buf : new Blob([buf], { type });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    //: TODO: return elements to render a "download" button    
+    return {
+        url,
+        download: filename
+    }
+
+}

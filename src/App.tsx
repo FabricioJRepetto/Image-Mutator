@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react'
-import { printer } from './mutator/printer'
+import { decoder } from './mutator/decode'
 import { scanner } from './mutator/scanner'
+import { printer } from './mutator/printer'
+import { encoder } from './mutator/encode'
 import './App.css'
-import { testgif } from './mutator/giftest'
 
 function App() {
     const canvas = useRef<HTMLCanvasElement>(null)
 
     const [gifFile, setGifFile] = useState<File | null>()
+    const [gifpreview, setGifpreview] = useState<string | null>(null)
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -132,10 +134,17 @@ function App() {
     const mutateGif = async (): Promise<void> => {
         if (!gifFile || !canvas.current) return
 
-        const gifData = await testgif(gifFile)
-        // console.log(gifData);
+        const gifData = await decoder(gifFile)
 
         if (gifData) {
+            /*
+               {
+                   delay: frames[i].delay
+                   width: frames[i].dims.width,
+                   height: frames[i].dims.height,
+                   data: frames[i].patch
+               }
+           */
             const styledFrames: Array<ImageData> = [],
                 WIDTH = gifData[0].dims.width,
                 HEIGHT = gifData[0].dims.height,
@@ -153,8 +162,6 @@ function App() {
                 invert,
                 containedDots,
                 fontSize,
-                //: TODO: refact
-                margin: false,
                 background
             }
 
@@ -182,53 +189,27 @@ function App() {
                     //? 5: save new frame
                     styledFrames.push(styledFrame)
                 }
-
             }
-            // console.log(styledFrames);
+            cntx.clearRect(0, 0, WIDTH, HEIGHT)
 
-            //? 6: compilar gif
-            let i = 0
-            setInterval(() => {
-                cntx.clearRect(0, 0, WIDTH, HEIGHT)
-                cntx.putImageData(styledFrames[i], 0, 0)
-                i++
-                if (i === styledFrames.length) i = 0
-            }, Math.floor(DELAY))
+            //? 6: compile new gif
+            //_ file encoder 
+            //: TODO: should return final buffer
+            //: convert buffer to url object
+            //: get original file name for download?
+            //: render preview & download button 
+            const preview = await encoder(styledFrames, DELAY)
+            //_ testing preview
+            if (preview) setGifpreview(() => preview)
 
-            //________________________________________________________________
-
-            // const frame = gifData[15]
-            // console.log(frame);
-
-            // const imgData = {
-            //     width: frame.dims.width,
-            //     height: frame.dims.height,
-            //     data: frame.patch
-            // }
-
-            // const data = await scanner(imgData, res)
-
-            // if (!imgData || !canvas.current) return
-
-            // canvas.current.width = imgData.width
-            // canvas.current.height = imgData.height
-            // const cntx = canvas.current.getContext('2d')
-
-            // if (!cntx) return
-            // cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
-
-            // const config = {
-            //     res,
-            //     style,
-            //     invert,
-            //     containedDots,
-            //     fontSize,
-            //     //: TODO: refact
-            //     margin: false,
-            //     background
-            // }
-
-            // await printer(canvas.current, data, config, setBluePrint)
+            //_ raw animation preview for testing
+            // let i = 0
+            // setInterval(() => {
+            //     cntx.clearRect(0, 0, WIDTH, HEIGHT)
+            //     cntx.putImageData(styledFrames[i], 0, 0)
+            //     i++
+            //     if (i === styledFrames.length) i = 0
+            // }, Math.floor(DELAY))
         }
     }
 
@@ -239,7 +220,8 @@ function App() {
                 <p>{loading ? `[[[ CARGANDO ]]]` : `( STAND BY )`}</p>
             </header>
 
-            <canvas ref={canvas} className='canvas'></canvas>
+            <canvas ref={canvas} className='canvas' style={gifpreview ? { display: 'none' } : {}}></canvas>
+            {gifpreview && <img src={gifpreview} />}
 
             <div>
                 <p>Imagen</p>
