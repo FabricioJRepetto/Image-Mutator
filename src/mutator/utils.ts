@@ -17,10 +17,10 @@ export const toChar = (c: number): string => {
     else return '·'
 }
 
-export const toText = (array: Array<pixelData>, size: number) => {
+export const toText = (array: Array<pixelData>, size: number, invert: boolean) => {
     //: TODO: refact
     let aux = [],
-        string = array.map(e => toChar(e.average)).toString().replaceAll(',', '')
+        string = array.map(e => toChar(invert ? 255 - e.average : e.average)).toString().replaceAll(',', '')
     for (let i = 0; i < Math.round(array.length / size); i++) {
         aux.push(string.slice(0, size))
         string = string.slice(size)

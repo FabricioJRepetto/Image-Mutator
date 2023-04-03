@@ -5,7 +5,7 @@ export const printer = async (
     canvas: HTMLCanvasElement,
     imgData: Array<pixelData>,
     config: configObject,
-    setBluePrint: (bluePrint: Array<string>) => void
+    setBluePrint: (bluePrint: string[]) => void
 ): Promise<void> => {
     await new Promise((resolve, reject) => {
 
@@ -53,7 +53,7 @@ export const printer = async (
                 //? fonts: Courier Prime / Inconsolata
                 cntx.font = Math.round(Math.round(res * fontSize)) + 'px Inconsolata'
 
-                setBluePrint(toText(imgData, Math.round(canvas.width / res)))
+                setBluePrint(toText(imgData, Math.round(canvas.width / res), invert))
 
                 imgData.forEach(e => {
                     cntx.fillStyle = e.color
