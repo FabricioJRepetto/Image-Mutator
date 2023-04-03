@@ -12,6 +12,13 @@ const Main = (): JSX.Element => {
                 <div onClick={() => navigate('/animation')}>Animation</div>
             </header>
 
+            <section className='color-palette'>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </section>
+
             {<Outlet /> || null}
         </div>
     )
