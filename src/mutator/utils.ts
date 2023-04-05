@@ -39,17 +39,17 @@ export const toDots = (average: number, res: number, containedDots: boolean): nu
     } else return aux
 }
 
-export const download = (buf: Blob, filename: string, type: any): { url: string, download: string } => {
+export const finalSteps = (buf: Blob, filename: string, type: any, button: HTMLAnchorElement | null): string | null => {
+    //_ create blob from buffer to download file and render preview
+    if (!button) return null
+
+    // create blob
     const blob = buf instanceof Blob ? buf : new Blob([buf], { type });
     const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.click();
-    //: TODO: return elements to render a "download" button    
-    return {
-        url,
-        download: filename
-    }
-
+    // set download button href
+    button.href = url;
+    // set file name
+    button.download = filename;
+    // return url for preview
+    return url
 }

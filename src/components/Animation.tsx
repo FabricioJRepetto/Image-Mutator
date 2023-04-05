@@ -3,14 +3,17 @@ import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { encoder } from '../mutator/encode'
 import { decoder } from '../mutator/decode'
+import { finalSteps } from '../mutator/utils'
 
 const Animation = (): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
+    const dlbutton = useRef<HTMLAnchorElement>(null)
 
     const [gifFile, setGifFile] = useState<File | null>()
     const [gifpreview, setGifpreview] = useState<string | null>(null)
 
     const [loading, setLoading] = useState<boolean>(false)
+
     const [style, setStyle] = useState<string>('dots')
     const [res, setRes] = useState<number>(5)
     const [background, setBackground] = useState<string | null>(null)
@@ -24,8 +27,6 @@ const Animation = (): JSX.Element => {
         if (files && files[0]) {
             const file = files[0]
             setGifFile(() => file)
-            console.log(file);
-
         }
     }
 
@@ -35,14 +36,6 @@ const Animation = (): JSX.Element => {
         const gifData = await decoder(gifFile)
 
         if (gifData) {
-            /*
-               {
-                   delay: frames[i].delay
-                   width: frames[i].dims.width,
-                   height: frames[i].dims.height,
-                   data: frames[i].patch
-               }
-           */
             const styledFrames: Array<ImageData> = [],
                 WIDTH = gifData[0].dims.width,
                 HEIGHT = gifData[0].dims.height,
@@ -92,22 +85,13 @@ const Animation = (): JSX.Element => {
 
             //? 6: compile new gif
             //_ file encoder 
-            const preview = await encoder(styledFrames, DELAY)
-            //: TODO: should return final buffer
-            //: convert buffer to url object
-            //: get original file name for download?
-            //: render preview & download button 
-            //_ testing preview
-            if (preview) setGifpreview(() => preview)
+            const buffer = await encoder(styledFrames, DELAY)
 
-            //_ raw animation preview for testing
-            // let i = 0
-            // setInterval(() => {
-            //     cntx.clearRect(0, 0, WIDTH, HEIGHT)
-            //     cntx.putImageData(styledFrames[i], 0, 0)
-            //     i++
-            //     if (i === styledFrames.length) i = 0
-            // }, Math.floor(DELAY))
+            //? 7: set preview and download button
+            if (buffer) {
+                const preview = finalSteps(buffer, gifFile.name, { type: 'image/gif' }, dlbutton.current)
+                preview && setGifpreview(() => preview)
+            }
         }
     }
 
@@ -137,7 +121,12 @@ const Animation = (): JSX.Element => {
     return (
         <div>
             <canvas ref={canvas} className='canvas' style={{ display: 'none' }}></canvas>
-            {gifpreview && <img src={gifpreview} />}
+
+            <div style={gifpreview ? {} : { display: 'none' }}>
+                {gifpreview && <img src={gifpreview} />}
+                <br />
+                <a ref={dlbutton} href=''>download</a>
+            </div>
 
             <div>
                 <p>Gif</p>

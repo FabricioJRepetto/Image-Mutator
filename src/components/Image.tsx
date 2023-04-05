@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
+import '../App.css'
 
 const Image = (): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
@@ -110,37 +111,46 @@ const Image = (): JSX.Element => {
                 <input type="file" id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
             </div>
 
-            <div>
-                <select name="style" id="select" defaultValue={'dots'} onChange={(e) => setStyle(e.target.value)}>
+            <div className='border'>
+                <label htmlFor="style">Style</label>
+                <select name="style" id="select" defaultValue={'dots'} className='styleselect' onChange={(e) => setStyle(e.target.value)}>
                     <option value="ascii">ascii</option>
                     <option value="dots">dots</option>
                 </select>
             </div>
 
-            <div>
-                <p>Resolution: {res}{imgData && <i> ({Math.ceil(imgData.width / res)} per row)</i>}</p>
-                <input type="range" min={1} max={15} defaultValue={5} onChange={(e) => setRes(parseInt(e.target.value))}></input>
+            <div className='border'>
+                <label htmlFor="range">Resolution: {res}{imgData && <i> ({Math.ceil(imgData.width / res)} per row)</i>}</label>
+                <input type="range" min={2} max={15} defaultValue={5} className='resolution' onChange={(e) => setRes(parseInt(e.target.value))}></input>
             </div>
 
-            <div>
-                <p>Background: {background || 'transparent'}</p>
-                <input type="color" onChange={(e) => setBackground(e.target.value)}></input>
-                <button onClick={() => setBackground(null)}>transparent</button>
+            <div className='border'>
+                <label htmlFor="color">Background: {background || '🚫'}</label>
+                <input type="color" className='colorinput' onChange={(e) => setBackground(e.target.value)}></input>
+                <div className='transparent' onClick={() => setBackground(null)}>🚫</div>
+            </div>
+
+            <div className='border'>
+                <label htmlFor="invert">Invert: {invert ? 'yes' : 'no'}</label>
+                <input disabled={double} type="checkbox" name="invert" id="invert" onChange={() => setInvert(current => !current)}></input>
             </div>
 
             {style === 'dots' &&
                 <>
-                    <label htmlFor="limitDots">limit dot size</label>
-                    <input type="checkbox" name="limitDots" id="limitDots" defaultChecked disabled={double} onChange={() => setContainedDots(() => !containedDots)}></input>
-                    <br />
-                    <label htmlFor="double">Double pass: {double ? 'yes' : 'no'}</label>
-                    <input type="checkbox" name="double" id="double" onChange={() => setDouble(current => !current)}></input>
-                    <br />
-                    {double && <>
+                    <div className='border'>
+                        <label htmlFor="limitDots">Limit dot size</label>
+                        <input type="checkbox" name="limitDots" id="limitDots" defaultChecked disabled={double} onChange={() => setContainedDots(() => !containedDots)}></input>
+                    </div>
+
+                    <div className='border'>
+                        <label htmlFor="double">Double pass: {double ? 'yes' : 'no'}</label>
+                        <input type="checkbox" name="double" id="double" onChange={() => setDouble(current => !current)}></input>
+                    </div>
+
+                    {double && <div className='border'>
                         <label htmlFor="brighter">Brighter: {brighter ? 'yes' : 'no'}</label>
                         <input type="checkbox" name="brighter" id="brighter" checked={brighter} onChange={() => setBrighter(current => !current)}></input>
-                        <br />
-                    </>}
+                    </div>}
                 </>}
 
             {style === 'ascii' &&
@@ -152,12 +162,6 @@ const Image = (): JSX.Element => {
                 </>}
 
             <div>
-                <>
-                    <label htmlFor="invert">Invert: {invert ? 'yes' : 'no'}</label>
-                    <input disabled={double} type="checkbox" name="invert" id="invert" onChange={() => setInvert(current => !current)}></input>
-                    <br />
-
-                </>
                 <button onClick={mutate} disabled={!imgData}>MUTATE</button>
                 <button onClick={reset} >RESET</button>
             </div>

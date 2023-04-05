@@ -1,8 +1,7 @@
 import { GIFEncoder, quantize, applyPalette } from 'gifenc/dist/gifenc';
-import { download } from './utils';
 
-export const encoder = async (frames: Array<ImageData>, delay: number) => {
-    if (!frames) return
+export const encoder = async (frames: Array<ImageData>, delay: number): Promise<Blob | null> => {
+    if (!frames) return null
 
     // Create an encoding stream
     const gif = GIFEncoder();
@@ -27,8 +26,7 @@ export const encoder = async (frames: Array<ImageData>, delay: number) => {
     // Get the Uint8Array output of your binary GIF file
     // const output = gif.bytes();
 
-    //_ download gif file
+    // Get gif buffer
     const buffer = gif.bytesView();
-    const { url } = download(buffer, 'animation.gif', { type: 'image/gif' })
-    return url
+    return buffer
 }
