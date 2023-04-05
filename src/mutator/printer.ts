@@ -30,7 +30,7 @@ export const printer = async (
             return aux
         }
 
-        if (background) {
+        if (background?.length === 7) {
             cntx.fillStyle = background;
             cntx.fillRect(0, 0, canvas.width, canvas.height);
         }

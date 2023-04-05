@@ -3,7 +3,7 @@ import { pixelData } from "../types"
 export const scanner = async (
     imgData: ImageData | any,
     res: number
-): Promise<Array<pixelData>> => {
+): Promise<pixelData[]> => {
 
     const {
         width,
@@ -12,7 +12,7 @@ export const scanner = async (
     } = imgData
     // console.log(imgData.data);
 
-    let imageToArray: Array<pixelData> = []
+    let imageToArray: pixelData[] = []
 
     for (let y = 0; y < height; y += res) {
         for (let x = 0; x < width; x += res) {

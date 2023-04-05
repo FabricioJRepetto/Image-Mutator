@@ -123,6 +123,10 @@
     border-radius: 50%;
 }
 
+.hexinput {
+    width: 4rem;
+}
+
 .colorinput {
     -webkit-appearance: none;
     -moz-appearance: none;

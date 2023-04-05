@@ -1,6 +1,6 @@
 import { GIFEncoder, quantize, applyPalette } from 'gifenc/dist/gifenc';
 
-export const encoder = async (frames: Array<ImageData>, delay: number): Promise<Blob | null> => {
+export const encoder = async (frames: ImageData[], delay: number): Promise<Blob | null> => {
     if (!frames) return null
 
     // Create an encoding stream

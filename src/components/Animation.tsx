@@ -4,6 +4,8 @@ import { printer } from '../mutator/printer'
 import { encoder } from '../mutator/encode'
 import { decoder } from '../mutator/decode'
 import { finalSteps } from '../mutator/utils'
+import { options } from '../types'
+import OptionsPanel from './OptionsPanel'
 
 const Animation = (): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
@@ -14,14 +16,28 @@ const Animation = (): JSX.Element => {
 
     const [loading, setLoading] = useState<boolean>(false)
 
-    const [style, setStyle] = useState<string>('dots')
-    const [res, setRes] = useState<number>(5)
-    const [background, setBackground] = useState<string | null>(null)
-    const [containedDots, setContainedDots] = useState<boolean>(true)
-    const [invert, setInvert] = useState<boolean>(false)
-    const [fontSize, setFontSize] = useState<number>(1)
-    // const [bluePrint, setBluePrint] = useState<Array<string> | null>(null)
-    const [double, setDouble] = useState<boolean>(false)
+    const [options, setOptions] = useState<options>({
+        imgData: null,
+        style: 'dots',
+        res: 5,
+        background: null,
+        containedDots: true,
+        invert: false,
+        fontSize: 1,
+        showText: false,
+        bluePrint: null,
+        double: false,
+        brighter: false
+    })
+
+    // const [style, setStyle] = useState<string>('dots')
+    // const [res, setRes] = useState<number>(5)
+    // const [background, setBackground] = useState<string | null>(null)
+    // const [containedDots, setContainedDots] = useState<boolean>(true)
+    // const [invert, setInvert] = useState<boolean>(false)
+    // const [fontSize, setFontSize] = useState<number>(1)
+    // // const [bluePrint, setBluePrint] = useState<Array<string> | null>(null)
+    // const [double, setDouble] = useState<boolean>(false)
 
     const loadGif = (files: FileList | null): void => {
         if (files && files[0]) {
@@ -48,12 +64,12 @@ const Animation = (): JSX.Element => {
             if (!cntx) return
 
             const config = {
-                res,
-                style,
-                invert,
-                containedDots,
-                fontSize,
-                background
+                res: options.res,
+                style: options.style,
+                invert: options.invert,
+                containedDots: options.containedDots,
+                fontSize: options.fontSize,
+                background: options.background
             }
 
             for (let i = 0; i < gifData.length; i++) {
@@ -66,7 +82,7 @@ const Animation = (): JSX.Element => {
 
                 if (frame.pixels.length) {
                     //? 1: scan frame
-                    const data = await scanner(imgData, res)
+                    const data = await scanner(imgData, options.res)
 
                     //? 2: clear canvas
                     cntx.clearRect(0, 0, WIDTH, HEIGHT)
@@ -95,11 +111,6 @@ const Animation = (): JSX.Element => {
         }
     }
 
-    const fontSizeHandler = (num: string): void => {
-        let size = parseInt(num) / 10
-        setFontSize(() => size)
-    }
-
     const reset = (): void => {
         if (canvas.current) {
             const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
@@ -113,9 +124,15 @@ const Animation = (): JSX.Element => {
         }
         setGifFile(() => null)
 
-        setBackground(() => null)
+        //: setBackground(() => null)
         // setDouble(() => false)
         // setBrighter(() => false)
+        setOptions(opt => ({
+            ...opt,
+            background: null,
+            double: false,
+            brighter: false
+        }))
     }
 
     return (
@@ -123,7 +140,7 @@ const Animation = (): JSX.Element => {
             <canvas ref={canvas} className='canvas' style={{ display: 'none' }}></canvas>
 
             <div style={gifpreview ? {} : { display: 'none' }}>
-                {gifpreview && <img src={gifpreview} />}
+                {gifpreview && <img src={gifpreview} style={{ pointerEvents: 'none' }} />}
                 <br />
                 <a ref={dlbutton} href=''>download</a>
             </div>
@@ -133,55 +150,9 @@ const Animation = (): JSX.Element => {
                 <input type="file" id='fileinput' onChange={(e) => loadGif(e.target.files)}></input>
             </div>
 
-            <div>
-                <select name="style" id="select" defaultValue={'dots'} onChange={(e) => setStyle(e.target.value)}>
-                    <option value="ascii">ascii</option>
-                    <option value="dots">dots</option>
-                </select>
-            </div>
+            <OptionsPanel options={options} setOptions={setOptions} GIF />
 
             <div>
-                <p>Resolution: {res}{canvas.current && <i> ({Math.ceil(canvas.current.width / res)} per row)</i>}</p>
-                <input type="range" min={1} max={15} defaultValue={5} onChange={(e) => setRes(parseInt(e.target.value))}></input>
-            </div>
-
-            <div>
-                <p>Background: {background || 'transparent'}</p>
-                <input type="color" onChange={(e) => setBackground(e.target.value)}></input>
-                <button onClick={() => setBackground(null)}>transparent</button>
-            </div>
-
-            {style === 'dots' &&
-                <>
-                    <label htmlFor="limitDots">limit dot size</label>
-                    <input type="checkbox" name="limitDots" id="limitDots" defaultChecked disabled={double} onChange={() => setContainedDots(() => !containedDots)}></input>
-                    {/* <br />
-                    <label htmlFor="double">Double pass: {double ? 'yes' : 'no'}</label>
-                    <input type="checkbox" name="double" id="double" onChange={() => setDouble(current => !current)}></input> */}
-                    {/* <br />
-                    {double && <>
-                        <label htmlFor="brighter">Brighter: {brighter ? 'no' : 'yes'}</label>
-                        <input type="checkbox" name="brighter" id="brighter" onChange={() => setBrighter(current => !current)}></input>
-                        <br />
-                    </>} */}
-                </>}
-
-            {style === 'ascii' &&
-                <>
-                    <>
-                        <p>Font size: <i>{fontSize}</i></p>
-                        <input type="range" min={0} max={19} defaultValue={10} onChange={(e) => fontSizeHandler(e.target.value)}></input>
-                        <br />
-                    </>
-                </>}
-
-            <div>
-                <>
-                    <label htmlFor="invert">Invert: {invert ? 'yes' : 'no'}</label>
-                    <input disabled={double} type="checkbox" name="invert" id="invert" onChange={() => setInvert(current => !current)}></input>
-                    <br />
-
-                </>
                 <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
                 <button onClick={reset} >RESET</button>
             </div>

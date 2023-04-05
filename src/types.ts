@@ -21,6 +21,20 @@ export interface configObject {
     fontSize: number
 }
 
+export interface options {
+    imgData: ImageData | null,
+    style: string,
+    res: number,
+    background: string | null,
+    containedDots: boolean,
+    invert: boolean,
+    fontSize: number,
+    showText: boolean,
+    bluePrint: string[] | null,
+    double: boolean,
+    brighter: boolean
+}
+
 //________________________________/
 
 // type Format = "rgb565" | "rgb444" | "rgba4444";
