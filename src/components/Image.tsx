@@ -66,8 +66,6 @@ const Image = (): JSX.Element => {
         if (!cntx) return
         cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
 
-        if (fileinput.current) fileinput.current.value = ''
-
         const config = {
             res: options.res,
             style: options.style,
@@ -109,6 +107,7 @@ const Image = (): JSX.Element => {
             canvas.current.height = 150
             canvas.current.width = 300
         }
+        if (fileinput.current) fileinput.current.value = ''
 
         setOptions(opt => ({
             ...opt,
