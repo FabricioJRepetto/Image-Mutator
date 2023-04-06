@@ -10,6 +10,7 @@ import OptionsPanel from './OptionsPanel'
 const Animation = (): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
     const dlbutton = useRef<HTMLAnchorElement>(null)
+    const fileinput = useRef<HTMLInputElement>(null)
 
     const [gifFile, setGifFile] = useState<File | null>()
     const [gifpreview, setGifpreview] = useState<string | null>(null)
@@ -117,11 +118,10 @@ const Animation = (): JSX.Element => {
             canvas.current.height = 150
             canvas.current.width = 300
         }
-        setGifFile(() => null)
+        if (fileinput.current) fileinput.current.value = ''
 
-        //: setBackground(() => null)
-        // setDouble(() => false)
-        // setBrighter(() => false)
+        setGifFile(() => null)
+        setGifpreview(() => null)
         setOptions(opt => ({
             ...opt,
             background: '#000000',
@@ -142,7 +142,7 @@ const Animation = (): JSX.Element => {
 
             <div>
                 <p>Gif</p>
-                <input type="file" id='fileinput' onChange={(e) => loadGif(e.target.files)}></input>
+                <input ref={fileinput} type="file" id='fileinput' onChange={(e) => loadGif(e.target.files)}></input>
             </div>
 
             <OptionsPanel options={options} setOptions={setOptions} GIF />

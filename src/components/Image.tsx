@@ -7,6 +7,7 @@ import OptionsPanel from './OptionsPanel'
 
 const Image = (): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
+    const fileinput = useRef<HTMLInputElement>(null)
 
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -65,6 +66,8 @@ const Image = (): JSX.Element => {
         if (!cntx) return
         cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
 
+        if (fileinput.current) fileinput.current.value = ''
+
         const config = {
             res: options.res,
             style: options.style,
@@ -107,12 +110,6 @@ const Image = (): JSX.Element => {
             canvas.current.width = 300
         }
 
-        //: setImgData(() => null)
-        //: setBackground(() => null)
-        //: setShowText(() => false)
-        //: setBluePrint(() => null)
-        //: setDouble(() => false)
-        //: setBrighter(() => false)
         setOptions(opt => ({
             ...opt,
             imgData: null,
@@ -126,13 +123,12 @@ const Image = (): JSX.Element => {
 
     return (
         <div>
-            <canvas ref={canvas} className='canvas'></canvas>
+            <canvas ref={canvas} className='canvas' style={options.imgData ? {} : { display: 'none' }}></canvas>
 
             <div>
                 <p>Imagen</p>
-                <input type="file" id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
+                <input ref={fileinput} type="file" id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
             </div>
-
 
             <OptionsPanel options={options} setOptions={setOptions} />
 

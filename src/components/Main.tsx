@@ -7,7 +7,7 @@ const Main = (): JSX.Element => {
     return (
         <div>
             <header className='navbar'>
-                <h2 onClick={() => navigate('/')}>Image mutator</h2>
+                <h1 onClick={() => navigate('/')}>Image mutator</h1>
                 <div onClick={() => navigate('/image')}>Image</div>
                 <div onClick={() => navigate('/animation')}>Animation</div>
             </header>

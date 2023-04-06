@@ -58,6 +58,9 @@
     height: fit-content;
     width: fit-content;
 }
+.navbar > h1 {
+    font-family: 'Creepster', cursive;
+}
 
 .navbar :nth-child(n + 2):hover {
     font-weight: 600;
