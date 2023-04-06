@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { encoder } from '../mutator/encode'
@@ -30,15 +30,6 @@ const Animation = (): JSX.Element => {
         brighter: false
     })
 
-    // const [style, setStyle] = useState<string>('dots')
-    // const [res, setRes] = useState<number>(5)
-    // const [background, setBackground] = useState<string | null>(null)
-    // const [containedDots, setContainedDots] = useState<boolean>(true)
-    // const [invert, setInvert] = useState<boolean>(false)
-    // const [fontSize, setFontSize] = useState<number>(1)
-    // // const [bluePrint, setBluePrint] = useState<Array<string> | null>(null)
-    // const [double, setDouble] = useState<boolean>(false)
-
     const loadGif = (files: FileList | null): void => {
         if (files && files[0]) {
             const file = files[0]
@@ -47,6 +38,7 @@ const Animation = (): JSX.Element => {
     }
 
     const mutateGif = async (): Promise<void> => {
+        console.time('mutation done in')
         if (!gifFile || !canvas.current) return
 
         const gifData = await decoder(gifFile)
@@ -108,6 +100,7 @@ const Animation = (): JSX.Element => {
                 const preview = finalSteps(buffer, gifFile.name, { type: 'image/gif' }, dlbutton.current)
                 preview && setGifpreview(() => preview)
             }
+            console.timeEnd('mutation done in')
         }
     }
 
@@ -156,7 +149,6 @@ const Animation = (): JSX.Element => {
                 <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
                 <button onClick={reset} >RESET</button>
             </div>
-
         </div>
     )
 }
