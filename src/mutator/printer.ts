@@ -30,10 +30,12 @@ export const printer = async (
             return aux
         }
 
-        if (background?.length === 7) {
-            cntx.fillStyle = background;
-            cntx.fillRect(0, 0, canvas.width, canvas.height);
-        }
+        // Paint background
+        // if no bg is defined, dots breaks into squares
+        cntx.fillStyle = background && background.length === 7
+            ? background
+            : '#000000';
+        cntx.fillRect(0, 0, canvas.width, canvas.height);
 
         switch (style) {
             case 'dots':

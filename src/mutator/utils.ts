@@ -35,7 +35,7 @@ export const toDots = (average: number, res: number, containedDots: boolean): nu
     let aux = Math.round((res * (((average * 100) / 255)) / 100))
     // / 2 = limitar el tamaño del circulo dentro de la casilla
     if (containedDots && aux > (res / 2)) {
-        return res / 2
+        return Math.round(res / 2)
     } else return aux
 }
 

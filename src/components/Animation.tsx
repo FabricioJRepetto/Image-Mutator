@@ -20,7 +20,7 @@ const Animation = (): JSX.Element => {
         imgData: null,
         style: 'dots',
         res: 5,
-        background: null,
+        background: '#000000',
         containedDots: true,
         invert: false,
         fontSize: 1,
@@ -38,7 +38,8 @@ const Animation = (): JSX.Element => {
     }
 
     const mutateGif = async (): Promise<void> => {
-        console.time('mutation done in')
+        const start = Date.now()
+
         if (!gifFile || !canvas.current) return
 
         const gifData = await decoder(gifFile)
@@ -64,8 +65,7 @@ const Animation = (): JSX.Element => {
                 background: options.background
             }
 
-            for (let i = 0; i < gifData.length; i++) {
-                const frame = gifData[i];
+            for (let frame of gifData) {
                 const imgData = {
                     width: WIDTH,
                     height: HEIGHT,
@@ -100,7 +100,9 @@ const Animation = (): JSX.Element => {
                 const preview = finalSteps(buffer, gifFile.name, { type: 'image/gif' }, dlbutton.current)
                 preview && setGifpreview(() => preview)
             }
-            console.timeEnd('mutation done in')
+
+            console.log(`Time elapsed: ${(Date.now() - start) / 1000}s`);
+
         }
     }
 
@@ -122,7 +124,7 @@ const Animation = (): JSX.Element => {
         // setBrighter(() => false)
         setOptions(opt => ({
             ...opt,
-            background: null,
+            background: '#000000',
             double: false,
             brighter: false
         }))

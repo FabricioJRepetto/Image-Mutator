@@ -41,7 +41,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
 
             <div className='border'>
                 <p>Background: {!options.background && '🚫'}</p>
-                <input type="text" placeholder='HEX' className='hexinput' onChange={(e) => setOptions(opt => ({
+                <input type="text" placeholder={options?.background || 'HEX code'} className='hexinput' onChange={(e) => setOptions(opt => ({
                     ...opt,
                     background: e.target.value
                 }))} />
@@ -49,10 +49,10 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
                     ...opt,
                     background: e.target.value
                 }))}></input>
-                <div className='transparent' onClick={() => setOptions(opt => ({
+                {!GIF && <div className='transparent' onClick={() => setOptions(opt => ({
                     ...opt,
                     background: null
-                }))}>🚫</div>
+                }))}>🚫</div>}
             </div>
 
             <div className='border'>
