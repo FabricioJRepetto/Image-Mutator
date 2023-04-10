@@ -1,15 +1,14 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
-import '../App.css'
-import { options } from '../types'
+import { mainComps, options } from '../types'
 import OptionsPanel from './OptionsPanel'
+import DragDrop from './DragDrop'
+import '../App.css'
 
-const Image = (): JSX.Element => {
+const Image = ({ file, load }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
     const fileinput = useRef<HTMLInputElement>(null)
-
-    const [loading, setLoading] = useState<boolean>(false)
 
     const [options, setOptions] = useState<options>({
         imgData: null,
@@ -25,12 +24,24 @@ const Image = (): JSX.Element => {
         brighter: false
     })
 
+    useEffect(() => {
+        if (file && file[0]) {
+            loadImage(file)
+            load(null)
+        }
+    }, [])
+
     const loadImage = (files: FileList | null): void => {
         if (files && files[0]) {
             const file = files[0]
-            // const img = new Image()
-            const img = document.createElement('img')
 
+            if (file.type !== 'image/jpeg' &&
+                file.type !== 'image/png' &&
+                file.type !== 'image/webp') {
+                return
+            }
+
+            const img = document.createElement('img')
             img.src = URL.createObjectURL(file)
 
             img.onload = () => {
@@ -58,8 +69,6 @@ const Image = (): JSX.Element => {
     }
 
     const mutate = async (): Promise<void> => {
-        setLoading(true)
-
         if (!options.imgData || !canvas.current) return
         const cntx = canvas.current.getContext('2d')
 
@@ -92,8 +101,6 @@ const Image = (): JSX.Element => {
                 })))
             }
         }
-
-        setLoading(false)
     }
 
     const reset = (): void => {
@@ -124,10 +131,9 @@ const Image = (): JSX.Element => {
         <div>
             <canvas ref={canvas} className='canvas' style={options.imgData ? {} : { display: 'none' }}></canvas>
 
-            <div>
-                <p>Imagen</p>
-                <input ref={fileinput} type="file" id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
-            </div>
+            {!options.imgData && <DragDrop input={fileinput.current} load={loadImage} />}
+
+            <input ref={fileinput} type="file" accept="image/jpeg, image/png, image/webp" multiple={false} id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
 
             <OptionsPanel options={options} setOptions={setOptions} />
 

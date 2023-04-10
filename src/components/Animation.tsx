@@ -1,21 +1,28 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { encoder } from '../mutator/encode'
 import { decoder } from '../mutator/decode'
 import { finalSteps } from '../mutator/utils'
-import { options } from '../types'
+import { mainComps, options } from '../types'
 import OptionsPanel from './OptionsPanel'
+import DragDrop from './DragDrop'
 
-const Animation = (): JSX.Element => {
+const Animation = ({ file, load }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
     const dlbutton = useRef<HTMLAnchorElement>(null)
     const fileinput = useRef<HTMLInputElement>(null)
 
     const [gifFile, setGifFile] = useState<File | null>()
+    const [ogpreview, setOgpreview] = useState<string | null>(null)
     const [gifpreview, setGifpreview] = useState<string | null>(null)
 
-    const [loading, setLoading] = useState<boolean>(false)
+    useEffect(() => {
+        if (file && file[0]) {
+            loadGif(file)
+            load(null)
+        }
+    }, [])
 
     const [options, setOptions] = useState<options>({
         imgData: null,
@@ -35,6 +42,9 @@ const Animation = (): JSX.Element => {
         if (files && files[0]) {
             const file = files[0]
             setGifFile(() => file)
+
+            const preview = URL.createObjectURL(file)
+            preview && setOgpreview(() => preview)
         }
     }
 
@@ -98,7 +108,7 @@ const Animation = (): JSX.Element => {
 
             //? 7: set preview and download button
             if (buffer) {
-                const preview = finalSteps(buffer, gifFile.name, { type: 'image/gif' }, dlbutton.current)
+                const preview = finalSteps(buffer, gifFile.name + '_mutated', { type: 'image/gif' }, dlbutton.current)
                 preview && setGifpreview(() => preview)
             }
 
@@ -134,16 +144,19 @@ const Animation = (): JSX.Element => {
         <div>
             <canvas ref={canvas} className='canvas' style={{ display: 'none' }}></canvas>
 
+            <div style={(ogpreview && !gifpreview) ? {} : { display: 'none' }}>
+                {(ogpreview && !gifpreview) && <img src={ogpreview} style={{ pointerEvents: 'none' }} />}
+            </div>
+
             <div style={gifpreview ? {} : { display: 'none' }}>
                 {gifpreview && <img src={gifpreview} style={{ pointerEvents: 'none' }} />}
                 <br />
                 <a ref={dlbutton} href=''>download</a>
             </div>
 
-            <div>
-                <p>Gif</p>
-                <input ref={fileinput} type="file" id='fileinput' onChange={(e) => loadGif(e.target.files)}></input>
-            </div>
+            {(!ogpreview && !gifpreview) && <DragDrop input={fileinput.current} load={loadGif} />}
+
+            <input ref={fileinput} type="file" id='fileinput' accept='image/gif' onChange={(e) => loadGif(e.target.files)}></input>
 
             <OptionsPanel options={options} setOptions={setOptions} GIF />
 
