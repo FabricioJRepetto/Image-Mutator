@@ -1,10 +1,6 @@
-import { options } from '../types'
-
-interface OptPanelProps {
-    options: options,
-    setOptions: React.Dispatch<React.SetStateAction<options>>,
-    GIF?: boolean
-}
+import { OptPanelProps } from '../types'
+import { useEffect, useRef } from 'react'
+import "../range-input.css"
 
 const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.Element => {
 
@@ -17,6 +13,25 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
             fontSize: size
         }))
     }
+
+    const resinput = useRef<HTMLInputElement | null>(null)
+
+    const rangeListener = () => {
+        const e = resinput.current
+        e && e.style.setProperty('--value', e.value)
+    }
+
+    useEffect(() => {
+        if (resinput.current) {
+            const e = resinput.current
+            e.style.setProperty('--value', e.value);
+            e.style.setProperty('--min', e.min == '' ? '0' : e.min);
+            e.style.setProperty('--max', e.max == '' ? '100' : e.max);
+            e.addEventListener('input', rangeListener);
+        }
+
+        return () => removeEventListener('input', rangeListener)
+    }, [])
 
     return (
         <div>
@@ -33,7 +48,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
 
             <div className='border'>
                 <label htmlFor="range">Resolution: {options.res}{options.imgData && <i> ({Math.ceil(options.imgData.width / options.res)} per row)</i>}</label>
-                <input type="range" min={2} max={15} defaultValue={5} className='resolution' onChange={(e) => setOptions(opt => ({
+                <input ref={resinput} type="range" min={2} max={15} defaultValue={5} className="resolution styled-slider slider-progress" onChange={(e) => setOptions(opt => ({
                     ...opt,
                     res: parseInt(e.target.value)
                 }))}></input>

@@ -38,3 +38,9 @@ export interface mainComps {
     load: React.Dispatch<React.SetStateAction<FileList | null>>,
     file?: FileList | null
 }
+
+export interface OptPanelProps {
+    options: options,
+    setOptions: React.Dispatch<React.SetStateAction<options>>,
+    GIF?: boolean
+}
