@@ -35,8 +35,10 @@ export interface options {
 }
 
 export interface mainComps {
-    load: React.Dispatch<React.SetStateAction<FileList | null>>,
-    file?: FileList | null
+    load: React.Dispatch<React.SetStateAction<File | null>>,
+    file?: File | null,
+    setPreview?: (buffer: Blob) => void,
+    parrentReset?: VoidFunction
 }
 
 export interface OptPanelProps {

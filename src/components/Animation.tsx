@@ -142,7 +142,7 @@ const Animation = ({ file, load }: mainComps): JSX.Element => {
 
     return (
         <div>
-            <canvas ref={canvas} className='canvas' style={{ display: 'none' }}></canvas>
+            <canvas ref={canvas} className='canvas'></canvas>
 
             <div style={(ogpreview && !gifpreview) ? {} : { display: 'none' }}>
                 {(ogpreview && !gifpreview) && <img src={ogpreview} style={{ pointerEvents: 'none' }} />}
@@ -154,7 +154,7 @@ const Animation = ({ file, load }: mainComps): JSX.Element => {
                 <a ref={dlbutton} href=''>download</a>
             </div>
 
-            {(!ogpreview && !gifpreview) && <DragDrop input={fileinput.current} load={loadGif} />}
+            {(!ogpreview && !gifpreview && fileinput.current) && <DragDrop input={fileinput.current} load={loadGif} />}
 
             <input ref={fileinput} type="file" id='fileinput' accept='image/gif' onChange={(e) => loadGif(e.target.files)}></input>
 

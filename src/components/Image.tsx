@@ -6,9 +6,8 @@ import OptionsPanel from './OptionsPanel'
 import DragDrop from './DragDrop'
 import '../App.css'
 
-const Image = ({ file, load }: mainComps): JSX.Element => {
+const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
-    const fileinput = useRef<HTMLInputElement>(null)
 
     const [options, setOptions] = useState<options>({
         imgData: null,
@@ -25,16 +24,14 @@ const Image = ({ file, load }: mainComps): JSX.Element => {
     })
 
     useEffect(() => {
-        if (file && file[0]) {
+        if (file) {
             loadImage(file)
-            load(null)
+            // load(null)
         }
     }, [])
 
-    const loadImage = (files: FileList | null): void => {
-        if (files && files[0]) {
-            const file = files[0]
-
+    const loadImage = (file: File | null): void => {
+        if (file) {
             if (file.type !== 'image/jpeg' &&
                 file.type !== 'image/png' &&
                 file.type !== 'image/webp') {
@@ -57,7 +54,6 @@ const Image = ({ file, load }: mainComps): JSX.Element => {
                         cntx.drawImage(img, 0, 0, width, height)
                         // console.log(canvas.current.toDataURL()) //? convierte a base64
                         const data = cntx.getImageData(0, 0, width, height)
-                        //: setImgData(() => data)
                         setOptions(opt => ({
                             ...opt,
                             imgData: data
@@ -89,16 +85,20 @@ const Image = ({ file, load }: mainComps): JSX.Element => {
         if (data && canvas.current) {
             if (options.double) {
                 // dark tones
-                await printer(canvas.current, data, { ...config, invert: true, containedDots: true }, () => null)
+                await printer(canvas.current, data, { ...config, invert: true, containedDots: true, background: null }, () => null, true)
 
                 // bright tones
-                await printer(canvas.current, data, { ...config, invert: false, containedDots: options.brighter, background: null }, () => null)
+                await printer(canvas.current, data, { ...config, invert: false, containedDots: !options.brighter, background: null }, () => null, true)
             } else {
-                //: await printer(canvas.current, data, config, (arg) => setBluePrint(() => arg))
                 await printer(canvas.current, data, config, (arg) => setOptions(opt => ({
                     ...opt,
                     bluePrint: arg
-                })))
+                })), !options.background)
+            }
+            if (setPreview) {
+                // const url = canvas.current.toDataURL('image/png', 1)
+                // setPreview(url)
+                canvas.current.toBlob((blob) => blob && setPreview(blob))
             }
         }
     }
@@ -114,7 +114,8 @@ const Image = ({ file, load }: mainComps): JSX.Element => {
             canvas.current.height = 150
             canvas.current.width = 300
         }
-        if (fileinput.current) fileinput.current.value = ''
+        parrentReset && parrentReset()
+        load(null)
 
         setOptions(opt => ({
             ...opt,
@@ -128,12 +129,8 @@ const Image = ({ file, load }: mainComps): JSX.Element => {
     }
 
     return (
-        <div>
-            <canvas ref={canvas} className='canvas' style={options.imgData ? {} : { display: 'none' }}></canvas>
-
-            {!options.imgData && <DragDrop input={fileinput.current} load={loadImage} />}
-
-            <input ref={fileinput} type="file" accept="image/jpeg, image/png, image/webp" multiple={false} id='fileinput' onChange={(e) => loadImage(e.target.files)}></input>
+        <div className='main-component'>
+            <canvas ref={canvas} className='canvas'></canvas>
 
             <OptionsPanel options={options} setOptions={setOptions} />
 

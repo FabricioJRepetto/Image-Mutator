@@ -5,7 +5,8 @@ export const printer = async (
     canvas: HTMLCanvasElement,
     imgData: Array<pixelData>,
     config: configObject,
-    setBluePrint: (bluePrint: string[]) => void
+    setBluePrint?: (bluePrint: string[]) => void,
+    transparency: boolean = false
 ): Promise<void> => {
     await new Promise((resolve, reject) => {
 
@@ -30,11 +31,13 @@ export const printer = async (
             return aux
         }
 
-        // Paint background
-        // if no bg is defined, dots breaks into squares
-        cntx.fillStyle = background && background.length === 7
-            ? background
-            : '#000000';
+        // Paint background if not transparency
+        //! if no bg is defined, dots breaks into squares
+        if (background || !transparency) {
+            cntx.fillStyle = background?.length === 7
+                ? background
+                : '#000000'
+        }
         cntx.fillRect(0, 0, canvas.width, canvas.height);
 
         switch (style) {
@@ -55,7 +58,7 @@ export const printer = async (
                 //? fonts: Courier Prime / Inconsolata
                 cntx.font = Math.round(Math.round(res * fontSize)) + 'px Inconsolata'
 
-                setBluePrint(toText(imgData, Math.round(canvas.width / res), invert))
+                setBluePrint && setBluePrint(toText(imgData, Math.round(canvas.width / res), invert))
 
                 imgData.forEach(e => {
                     cntx.fillStyle = e.color

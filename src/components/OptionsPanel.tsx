@@ -46,7 +46,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
                 </select>
             </div>
 
-            <div className='border'>
+            <div className='border resolution-div'>
                 <label htmlFor="range">Resolution: {options.res}{options.imgData && <i> ({Math.ceil(options.imgData.width / options.res)} per row)</i>}</label>
                 <input ref={resinput} type="range" min={2} max={15} defaultValue={5} className="resolution styled-slider slider-progress" onChange={(e) => setOptions(opt => ({
                     ...opt,

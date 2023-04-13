@@ -8,9 +8,9 @@ const Main = (): JSX.Element => {
     return (
         <div className='main-container'>
             <header className='navbar'>
-                <h1 onClick={() => navigate('/')}>Image mutator</h1>
-                <div onClick={() => navigate('/image')}>Image</div>
-                <div onClick={() => navigate('/animation')}>Animation</div>
+                <h1 onClick={() => navigate('/')}>ImageMutator</h1>
+                {/* <div onClick={() => navigate('/image')}>Image</div> */}
+                {/* <div onClick={() => navigate('/animation')}>Animation</div> */}
             </header>
 
             <Blob />
