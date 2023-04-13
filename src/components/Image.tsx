@@ -3,11 +3,12 @@ import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { mainComps, options } from '../types'
 import OptionsPanel from './OptionsPanel'
-import DragDrop from './DragDrop'
+import { download } from '../mutator/utils'
 import '../App.css'
 
-const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element => {
+const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
+    const [downloadButton, setDownloadButton] = useState<boolean>(false)
 
     const [options, setOptions] = useState<options>({
         imgData: null,
@@ -24,10 +25,7 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
     })
 
     useEffect(() => {
-        if (file) {
-            loadImage(file)
-            // load(null)
-        }
+        if (file) loadImage(file)
     }, [])
 
     const loadImage = (file: File | null): void => {
@@ -45,7 +43,7 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
                 if (canvas.current) {
                     const width = img.width,
                         height = img.height,
-                        cntx = canvas.current.getContext('2d')
+                        cntx = canvas.current.getContext('2d', { willReadFrequently: true })
 
                     canvas.current.width = width
                     canvas.current.height = height
@@ -66,7 +64,7 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
 
     const mutate = async (): Promise<void> => {
         if (!options.imgData || !canvas.current) return
-        const cntx = canvas.current.getContext('2d')
+        const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
 
         if (!cntx) return
         cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
@@ -83,9 +81,9 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
         const data = await scanner(options.imgData, options.res)
 
         if (data && canvas.current) {
-            if (options.double) {
+            if (options.double && options.style === 'dots') {
                 // dark tones
-                await printer(canvas.current, data, { ...config, invert: true, containedDots: true, background: null }, () => null, true)
+                await printer(canvas.current, data, { ...config, invert: true, containedDots: true }, () => null)
 
                 // bright tones
                 await printer(canvas.current, data, { ...config, invert: false, containedDots: !options.brighter, background: null }, () => null, true)
@@ -96,9 +94,8 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
                 })), !options.background)
             }
             if (setPreview) {
-                // const url = canvas.current.toDataURL('image/png', 1)
-                // setPreview(url)
                 canvas.current.toBlob((blob) => blob && setPreview(blob))
+                setDownloadButton(() => true)
             }
         }
     }
@@ -115,7 +112,7 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
             canvas.current.width = 300
         }
         parrentReset && parrentReset()
-        load(null)
+        setDownloadButton(() => false)
 
         setOptions(opt => ({
             ...opt,
@@ -134,10 +131,12 @@ const Image = ({ file, load, setPreview, parrentReset }: mainComps): JSX.Element
 
             <OptionsPanel options={options} setOptions={setOptions} />
 
-            <div>
+            <div className='buttons-container'>
                 <button onClick={mutate} disabled={!options.imgData}>MUTATE</button>
-                <button onClick={reset} >RESET</button>
+                <button onClick={reset}>RESET</button>
+                {downloadButton && <button onClick={download}>DOWNLOAD</button>}
             </div>
+
 
             <div className='ascciContainer'>
                 {options.bluePrint && options.showText && options.bluePrint.map((string, i) => <p key={i}>{string}</p>)}

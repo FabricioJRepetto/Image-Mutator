@@ -3,24 +3,20 @@ import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { encoder } from '../mutator/encode'
 import { decoder } from '../mutator/decode'
-import { finalSteps } from '../mutator/utils'
+import { download } from '../mutator/utils'
 import { mainComps, options } from '../types'
 import OptionsPanel from './OptionsPanel'
-import DragDrop from './DragDrop'
 
-const Animation = ({ file, load }: mainComps): JSX.Element => {
+const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
-    const dlbutton = useRef<HTMLAnchorElement>(null)
     const fileinput = useRef<HTMLInputElement>(null)
+    const [downloadButton, setDownloadButton] = useState<boolean>(false)
 
     const [gifFile, setGifFile] = useState<File | null>()
-    const [ogpreview, setOgpreview] = useState<string | null>(null)
-    const [gifpreview, setGifpreview] = useState<string | null>(null)
 
     useEffect(() => {
-        if (file && file[0]) {
+        if (file) {
             loadGif(file)
-            load(null)
         }
     }, [])
 
@@ -38,14 +34,8 @@ const Animation = ({ file, load }: mainComps): JSX.Element => {
         brighter: false
     })
 
-    const loadGif = (files: FileList | null): void => {
-        if (files && files[0]) {
-            const file = files[0]
-            setGifFile(() => file)
-
-            const preview = URL.createObjectURL(file)
-            preview && setOgpreview(() => preview)
-        }
+    const loadGif = (file: File): void => {
+        setGifFile(() => file)
     }
 
     const mutateGif = async (): Promise<void> => {
@@ -107,13 +97,13 @@ const Animation = ({ file, load }: mainComps): JSX.Element => {
             const buffer = await encoder(styledFrames, DELAY)
 
             //? 7: set preview and download button
-            if (buffer) {
-                const preview = finalSteps(buffer, gifFile.name + '_mutated', { type: 'image/gif' }, dlbutton.current)
-                preview && setGifpreview(() => preview)
+            if (buffer && setPreview) {
+                // const preview = finalSteps(buffer, gifFile.name + '_mutated', { type: 'image/gif' }, dlbutton.current)
+                setPreview(buffer)
+                setDownloadButton(() => true)
             }
 
             console.log(`Time elapsed: ${(Date.now() - start) / 1000}s`);
-
         }
     }
 
@@ -129,9 +119,11 @@ const Animation = ({ file, load }: mainComps): JSX.Element => {
             canvas.current.width = 300
         }
         if (fileinput.current) fileinput.current.value = ''
+        parrentReset && parrentReset()
+
+        setDownloadButton(() => false)
 
         setGifFile(() => null)
-        setGifpreview(() => null)
         setOptions(opt => ({
             ...opt,
             background: '#000000',
@@ -141,28 +133,15 @@ const Animation = ({ file, load }: mainComps): JSX.Element => {
     }
 
     return (
-        <div>
+        <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
-
-            <div style={(ogpreview && !gifpreview) ? {} : { display: 'none' }}>
-                {(ogpreview && !gifpreview) && <img src={ogpreview} style={{ pointerEvents: 'none' }} />}
-            </div>
-
-            <div style={gifpreview ? {} : { display: 'none' }}>
-                {gifpreview && <img src={gifpreview} style={{ pointerEvents: 'none' }} />}
-                <br />
-                <a ref={dlbutton} href=''>download</a>
-            </div>
-
-            {(!ogpreview && !gifpreview && fileinput.current) && <DragDrop input={fileinput.current} load={loadGif} />}
-
-            <input ref={fileinput} type="file" id='fileinput' accept='image/gif' onChange={(e) => loadGif(e.target.files)}></input>
 
             <OptionsPanel options={options} setOptions={setOptions} GIF />
 
-            <div>
+            <div className='buttons-container'>
                 <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
                 <button onClick={reset} >RESET</button>
+                {downloadButton && <button onClick={download}>DOWNLOAD</button>}
             </div>
         </div>
     )

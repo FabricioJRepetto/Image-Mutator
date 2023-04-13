@@ -41,13 +41,14 @@ export const toDots = (average: number, res: number, containedDots: boolean): nu
 
 export const finalSteps = (buf: Blob, filename: string, type: any, button: HTMLAnchorElement): string | null => {
     //_ create blob from buffer to download file and render preview
-    console.log(button);
-    if (!button) return null
+    if (!button) {
+        console.warn('No anchor element');
+        return null
+    }
 
     // create blob
     const blob = buf instanceof Blob ? buf : new Blob([buf], { type });
     const url = URL.createObjectURL(blob);
-    console.log(url);
 
     // set download button href
     button.href = url;
@@ -55,4 +56,11 @@ export const finalSteps = (buf: Blob, filename: string, type: any, button: HTMLA
     button.download = filename;
     // return url for preview
     return url
+}
+
+export const download = () => {
+    const anchor = document.getElementById('download-anchor')
+    anchor
+        ? anchor.click()
+        : console.warn('No download anchor found')
 }

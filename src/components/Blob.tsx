@@ -4,7 +4,7 @@ const Blob = () => {
             <div className='blob'>
                 <svg id="visual" viewBox="0 0 1050 1100" width="900" height="900" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1">
                     <g transform="translate(500 485)">
-                        <path fill="#79b03b">
+                        <path id='blob-path'>
                             <animate attributeName='d'
                                 dur="90s"
                                 repeatCount="indefinite"

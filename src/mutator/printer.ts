@@ -3,14 +3,14 @@ import { toChar, toDots, toText } from "./utils";
 
 export const printer = async (
     canvas: HTMLCanvasElement,
-    imgData: Array<pixelData>,
+    imgData: pixelData[],
     config: configObject,
     setBluePrint?: (bluePrint: string[]) => void,
-    transparency: boolean = false
+    transparency?: boolean
 ): Promise<void> => {
     await new Promise((resolve, reject) => {
 
-        const cntx = canvas.getContext('2d')
+        const cntx = canvas.getContext('2d', { willReadFrequently: true })
         if (!cntx) {
             console.error('Context cannot be null');
             reject(false)
@@ -32,13 +32,13 @@ export const printer = async (
         }
 
         // Paint background if not transparency
-        //! if no bg is defined, dots breaks into squares
+        //! if no bg is defined, dots breaks into squares on GIFs
         if (background || !transparency) {
             cntx.fillStyle = background?.length === 7
                 ? background
                 : '#000000'
+            cntx.fillRect(0, 0, canvas.width, canvas.height);
         }
-        cntx.fillRect(0, 0, canvas.width, canvas.height);
 
         switch (style) {
             case 'dots':

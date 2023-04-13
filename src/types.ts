@@ -1,7 +1,7 @@
 export interface imageData {
     width: number,
     height: number,
-    data: Array<number>
+    data: number[]
 }
 
 export interface pixelData {
@@ -20,6 +20,14 @@ export interface configObject {
     fontSize: number
 }
 
+export interface printerTypes {
+    canvas: HTMLCanvasElement,
+    imgData: pixelData[],
+    config: configObject,
+    setBluePrint?: (bluePrint: string[]) => void,
+    transparency?: boolean
+}
+
 export interface options {
     imgData: ImageData | null,
     style: string,
@@ -35,10 +43,9 @@ export interface options {
 }
 
 export interface mainComps {
-    load: React.Dispatch<React.SetStateAction<File | null>>,
-    file?: File | null,
-    setPreview?: (buffer: Blob) => void,
-    parrentReset?: VoidFunction
+    file: File | null,
+    setPreview: (buffer: Blob) => void,
+    parrentReset: VoidFunction
 }
 
 export interface OptPanelProps {

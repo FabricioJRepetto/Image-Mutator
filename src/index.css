@@ -1,9 +1,9 @@
 :root {
   /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
-  /* font-family: 'Bellota', cursive; */
-  font-family: 'Syne Mono', monospace;
+  font-family: 'Abel', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  font-size: 1.2rem;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -50,7 +50,7 @@ button {
   transition: border-color 0.25s;  
 }
 button:hover {
-  border-color: #1a7cb5;
+  border-color: #196a99;
 }
 /* button:focus,
 button:focus-visible {

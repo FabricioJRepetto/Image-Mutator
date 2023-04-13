@@ -33,6 +33,23 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
         return () => removeEventListener('input', rangeListener)
     }, [])
 
+    const bgHandler = (value: string): void => {
+        setOptions(opt => ({
+            ...opt,
+            background: value
+        }))
+
+        if (value.length >= 7) {
+            const blob = document.getElementById('blob-path')
+            if (blob)
+                blob.style.fill = value
+
+            const title = document.getElementById('title-header')
+            if (title)
+                title.style.color = value
+        }
+    }
+
     return (
         <div>
             <div className='border'>
@@ -56,14 +73,8 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
 
             <div className='border'>
                 <p>Background: {!options.background && '🚫'}</p>
-                <input type="text" placeholder={options?.background || 'HEX code'} className='hexinput' onChange={(e) => setOptions(opt => ({
-                    ...opt,
-                    background: e.target.value
-                }))} />
-                <input type="color" className='colorinput' value={options?.background?.length === 7 ? options.background : '#000000'} onChange={(e) => setOptions(opt => ({
-                    ...opt,
-                    background: e.target.value
-                }))}></input>
+                <input type="text" placeholder={options?.background || 'HEX code'} className='hexinput' onChange={(e) => bgHandler(e.target.value)} />
+                <input type="color" className='colorinput' value={options?.background?.length === 7 ? options.background : '#000000'} onChange={(e) => bgHandler(e.target.value)}></input>
                 {!GIF && <div className='transparent' onClick={() => setOptions(opt => ({
                     ...opt,
                     background: null
@@ -109,12 +120,13 @@ const OptionsPanel = ({ options, setOptions, GIF = false }: OptPanelProps): JSX.
                 <div className='border'>
                     <p>Font size: <i>{options.fontSize}</i></p>
                     <input type="range" min={0} max={19} defaultValue={10} onChange={(e) => fontSizeHandler(e.target.value)}></input>
-                    <br />
-                    <button onClick={() => setOptions(opt => ({
-                        ...opt,
-                        showText: !opt.showText
-                    }))} disabled={!options.bluePrint}>SHOW TEXT</button>
                 </div>}
+
+            {options.style === 'ascii' &&
+                <button onClick={() => setOptions(opt => ({
+                    ...opt,
+                    showText: !opt.showText
+                }))} disabled={!options.bluePrint}>SHOW TEXT</button>}
         </div>
     )
 }

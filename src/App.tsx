@@ -8,17 +8,14 @@ import './App.css'
 
 function App() {
     const [file, setFile] = useState<File | null>(null)
-
-    // _____________________________________ //
-
     const [mode, setMode] = useState<string | null>(null)
 
     const [ogpreview, setOgpreview] = useState<string | null>(null)
     const [finalpreview, setFinalpreview] = useState<string | null>(null)
-    const dlbutton = useRef<HTMLAnchorElement | null>(null)
-
-    const fileinput = useRef<HTMLInputElement | null>(null)
     const [inputArea, setInputArea] = useState<boolean>(false)
+
+    const dlbutton = useRef<HTMLAnchorElement | null>(null)
+    const fileinput = useRef<HTMLInputElement | null>(null)
 
     const loadfile = (files: FileList | null): void => {
         if (files && files[0]) {
@@ -56,22 +53,22 @@ function App() {
         setFile(() => null)
         setOgpreview(() => null)
         setFinalpreview(() => null)
+        if (fileinput.current) fileinput.current.value = ''
     }
 
     return (
         <div className="App">
             <section className='main-container'>
                 <header className='navbar'>
-                    <h1>ImageMutator</h1>
+                    <h1 id='title-header'>ImageMutator</h1>
                 </header>
 
                 <Blob />
 
-                {!ogpreview &&
-                    <div>
-                        <input type='file' ref={fileinput} accept="image/jpeg, image/png, image/webp, image/gif" multiple={false} onChange={(e) => loadfile(e.target.files)}></input>
-                        {inputArea && <DragDrop input={fileinput.current} load={loadfile} />}
-                    </div>}
+                <input type='file' ref={fileinput} accept="image/jpeg, image/png, image/webp, image/gif" multiple={false} onChange={(e) => loadfile(e.target.files)}></input>
+
+                {!ogpreview && inputArea &&
+                    <DragDrop input={fileinput.current} load={loadfile} />}
 
                 {(ogpreview && !finalpreview) &&
                     <img className={`og-preview`} src={ogpreview} />}
@@ -79,15 +76,15 @@ function App() {
                 {finalpreview && <>
                     <img className={`og-preview`} src={finalpreview} />
                 </>}
-                <a ref={dlbutton} href='' style={finalpreview ? {} : { display: 'none' }}>download</a>
+                <a ref={dlbutton} href='' id='download-anchor' style={{ display: 'none' }}>download</a>
 
             </section>
 
             {mode &&
-                <section>
+                <section className='main-container'>
                     {mode === 'image'
-                        ? <Image load={setFile} file={file} setPreview={previewHandler} parrentReset={reset} />
-                        : <Animation load={setFile} file={file} />}
+                        ? <Image file={file} setPreview={previewHandler} parrentReset={reset} />
+                        : <Animation file={file} setPreview={previewHandler} parrentReset={reset} />}
                 </section>}
         </div>
     )
