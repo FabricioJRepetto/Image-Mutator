@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { mainComps, options } from '../types'
 import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
-import { mainComps, options } from '../types'
-import OptionsPanel from './OptionsPanel'
 import { download } from '../mutator/utils'
+import OptionsPanel from './OptionsPanel'
 import '../App.css'
 
 const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
@@ -129,13 +129,13 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
-            <OptionsPanel options={options} setOptions={setOptions} />
+            <OptionsPanel options={options} setOptions={setOptions} mutate={mutate} reset={reset} download={download} dlBtn={downloadButton} />
 
-            <div className='buttons-container'>
+            {/* <div className='buttons-container'>
                 <button onClick={mutate} disabled={!options.imgData}>MUTATE</button>
                 <button onClick={reset}>RESET</button>
                 {downloadButton && <button onClick={download}>DOWNLOAD</button>}
-            </div>
+            </div> */}
 
 
             <div className='ascciContainer'>

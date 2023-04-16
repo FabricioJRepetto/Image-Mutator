@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import { mainComps, options } from '../types'
 import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { encoder } from '../mutator/encode'
 import { decoder } from '../mutator/decode'
 import { download } from '../mutator/utils'
-import { mainComps, options } from '../types'
 import OptionsPanel from './OptionsPanel'
 
 const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
@@ -136,13 +136,13 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
-            <OptionsPanel options={options} setOptions={setOptions} GIF />
+            <OptionsPanel options={options} setOptions={setOptions} GIF mutate={mutateGif} reset={reset} download={download} dlBtn={downloadButton} />
 
-            <div className='buttons-container'>
+            {/* <div className='buttons-container'>
                 <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
                 <button onClick={reset} >RESET</button>
                 {downloadButton && <button onClick={download}>DOWNLOAD</button>}
-            </div>
+            </div> */}
         </div>
     )
 }

@@ -6,11 +6,17 @@ import DragDrop from './components/DragDrop';
 import { finalSteps } from "./mutator/utils";
 import './App.css'
 
+interface pvstyle {
+    width: string,
+    height: string
+}
+
 function App() {
     const [file, setFile] = useState<File | null>(null)
     const [mode, setMode] = useState<string | null>(null)
 
     const [ogpreview, setOgpreview] = useState<string | null>(null)
+    const [previewStyle, setPreviewStyle] = useState<pvstyle | null>(null)
     const [finalpreview, setFinalpreview] = useState<string | null>(null)
     const [inputArea, setInputArea] = useState<boolean>(false)
 
@@ -20,18 +26,20 @@ function App() {
     const loadfile = (files: FileList | null): void => {
         if (files && files[0]) {
             const file = files[0]
-            setFile(file)
-
             const preview = URL.createObjectURL(file)
             preview && setOgpreview(() => preview)
 
-            if (file.type === 'image/gif') {
-                setMode(() => 'animation')
-            } else if (file.type === 'image/jpeg' ||
-                file.type === 'image/png' ||
-                file.type === 'image/webp') {
-                setMode(() => 'image')
-            }
+            setTimeout(() => {
+                setFile(file)
+
+                if (file.type === 'image/gif') {
+                    setMode(() => 'animation')
+                } else if (file.type === 'image/jpeg' ||
+                    file.type === 'image/png' ||
+                    file.type === 'image/webp') {
+                    setMode(() => 'image')
+                }
+            }, 500);
         }
     }
 
@@ -60,7 +68,7 @@ function App() {
         <div className="App">
             <section className='main-container'>
                 <header className='navbar'>
-                    <h1 id='title-header'>ImageMutator</h1>
+                    <h1 id='title-header'>Image Mutator </h1>
                 </header>
 
                 <Blob />
@@ -71,7 +79,7 @@ function App() {
                     <DragDrop input={fileinput.current} load={loadfile} />}
 
                 {(ogpreview && !finalpreview) &&
-                    <img className={`og-preview`} src={ogpreview} />}
+                    <img className={`og-preview`} style={previewStyle ? previewStyle : {}} src={ogpreview} />}
 
                 {finalpreview && <>
                     <img className={`og-preview`} src={finalpreview} />
@@ -80,12 +88,14 @@ function App() {
 
             </section>
 
-            {mode &&
-                <section className='main-container'>
-                    {mode === 'image'
+
+            <section className={`controllers-container ${mode ? 'controllers-open' : ''}`}>
+                {mode
+                    ? mode === 'image'
                         ? <Image file={file} setPreview={previewHandler} parrentReset={reset} />
-                        : <Animation file={file} setPreview={previewHandler} parrentReset={reset} />}
-                </section>}
+                        : <Animation file={file} setPreview={previewHandler} parrentReset={reset} />
+                    : null}
+            </section>
         </div>
     )
 }

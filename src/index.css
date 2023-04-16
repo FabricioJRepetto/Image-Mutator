@@ -40,22 +40,22 @@ h1 {
 
 button {
   border-radius: 8px;
-  border: 4px solid transparent;
+  border: 4px solid #1e72a3;
   padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  font-size: 1.2em;
   font-family: inherit;
   background-color: #155d88;
   cursor: pointer;
-  transition: border-color 0.25s;  
+  transition: border-color 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  min-width: fit-content;
 }
 button:hover {
-  border-color: #196a99;
+  border-color: #2684bb;
 }
-/* button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -68,4 +68,21 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+input[type=file] {
+    display: none;
+}
+select,
+input[type=text] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #e7d5b9;
+    color: #212121;
+    border-radius: .25rem;
+    padding: .25rem;
+    border: none;
+    outline: none;
+    font-size: .8rem;
+    cursor: pointer;
 }

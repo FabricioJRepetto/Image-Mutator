@@ -51,5 +51,16 @@ export interface mainComps {
 export interface OptPanelProps {
     options: options,
     setOptions: React.Dispatch<React.SetStateAction<options>>,
+    GIF?: boolean,
+    mutate: () => void,
+    reset: () => void,
+    dlBtn: boolean,
+    download: () => void
+}
+
+export interface OptPanelComp {
+    options?: options,
+    setOptions: React.Dispatch<React.SetStateAction<options>>,
+    bgHandler?: (arg: string) => void,
     GIF?: boolean
 }
