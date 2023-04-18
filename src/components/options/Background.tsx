@@ -1,9 +1,12 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { OptPanelComp } from '../../types'
+import { play } from '../Sound'
 
 const Background = ({ options, setOptions, bgHandler, GIF }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
     if (!bgHandler) return <>error: cb</>
+
+    useEffect(() => play(), [])
 
     return (
         <div className='OptPanelComp'>

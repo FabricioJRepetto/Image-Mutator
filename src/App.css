@@ -144,7 +144,12 @@
     background-color: #d5472c;
 }
 
+.options-panel {
+    margin: 0 1rem;
+}
+
 .OptPanelComp {
+    min-width: fit-content;
     border-radius: 1.5rem;
     background-color: #d5472c;
     padding: 1rem;
@@ -216,6 +221,16 @@
     flex-direction: column;
     gap: 0;
     justify-content: space-between;
+}
+.font-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+}
+.font-container button {
+    align-self: center;
+    width: fit-content;
 }
 
 .hexinput {
@@ -323,21 +338,21 @@
     margin: auto 0;
     max-width: 70vw;
     max-height: 80vh;
-    border-radius: 5%;
+    border-radius: 1.5em;
     pointer-events: none;
     background-color: #212121;
     animation: zoom .5s cubic-bezier(.67,.31,.44,1.45);
 }
 @keyframes zoom {
     from {
-        border-radius: 50%;        
+        /* border-radius: 99em;         */
         opacity: 0;
         max-width: 35vw;
         max-height: 40vh;
     }
 
     to {
-        border-radius: 5%;        
+        /* border-radius: 1.5em; */
         opacity: 1;
         max-width: 70vw;
         max-height: 80vh;
@@ -420,4 +435,17 @@
         rotate: -5deg;
         scale: 1.2;
     }
+}
+
+.checkbox-eye {
+    display: flex;
+    align-items: center;
+    height: 1.25rem;
+    aspect-ratio: 1;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+.disabled-eye {
+    color: #e7d5b999;
+    cursor: default;
 }

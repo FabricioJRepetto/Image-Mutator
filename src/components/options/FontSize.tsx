@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { OptPanelComp } from '../../types'
 import "../../range-input.css"
+import { play } from '../Sound'
 
 const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
@@ -11,6 +12,10 @@ const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
         const e = fontinput.current
         e && e.style.setProperty('--value', e.value)
     }
+
+    useEffect(() => {
+        options.style === 'ascii' && play()
+    }, [options.style])
 
     useEffect(() => {
         if (fontinput.current) {
@@ -35,7 +40,7 @@ const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     }
 
     return (
-        <div className={options.style !== 'ascii' ? 'hidden' : ''}>
+        <div className={`${options.style !== 'ascii' ? 'hidden' : 'font-container'}`}>
             <div className='OptPanelComp resolution-div'>
                 <p>Font size: <i>{options.fontSize}</i></p>
                 <input ref={fontinput} type="range" min={1} max={19} defaultValue={10} className='resolution styled-slider slider-progress' onChange={(e) => fontSizeHandler(e.target.value)}></input>

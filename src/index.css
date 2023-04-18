@@ -86,3 +86,9 @@ input[type=text] {
     font-size: .8rem;
     cursor: pointer;
 }
+
+input[typoe=radio] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #e7d5b9;
+}

@@ -14,7 +14,7 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         imgData: null,
         style: 'dots',
         res: 5,
-        background: null,
+        background: '#212121',
         containedDots: true,
         invert: false,
         fontSize: 1,

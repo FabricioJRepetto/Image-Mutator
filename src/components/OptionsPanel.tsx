@@ -11,6 +11,7 @@ import FontSize from './options/FontSize'
 import "../range-input.css"
 
 import { RiSaveFill, RiTestTubeFill, RiArrowGoBackFill } from 'react-icons/ri';
+import { play } from './Sound'
 
 const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, download, dlBtn }: OptPanelProps): JSX.Element => {
     const [RENDER, setRENDER] = useState<number>(0)
@@ -33,6 +34,10 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
     }
 
     useEffect(() => {
+        dlBtn && play()
+    }, [dlBtn])
+
+    useEffect(() => {
         let i = 0
         const inter = setInterval(() => {
             setRENDER(pre => {
@@ -45,6 +50,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
             if (ele[i - 1]) ele[i - 1].style.rotate = `${angle}deg`
 
             if (i >= 7) {
+                setTimeout(() => play(), 100);
                 clearInterval(inter)
                 return
             }
@@ -52,7 +58,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
     }, [])
 
     return (
-        <div id='container'>
+        <div id='container' className='options-panel'>
             {RENDER >= 1 && <Style setOptions={setOptions} />}
             {RENDER >= 2 && <Resolution options={options} setOptions={setOptions} />}
             {RENDER >= 3 && <Background options={options} setOptions={setOptions} bgHandler={bgHandler} GIF={GIF} />}
@@ -71,7 +77,6 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
                     <button onClick={download}><RiSaveFill />DOWNLOAD</button>
                 </div>}
             </div>}
-
         </div>
     )
 }
