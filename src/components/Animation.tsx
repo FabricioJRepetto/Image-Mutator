@@ -7,7 +7,7 @@ import { decoder } from '../mutator/decode'
 import { download } from '../mutator/utils'
 import OptionsPanel from './OptionsPanel'
 
-const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
+const Animation = ({ file, setPreview }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
     const fileinput = useRef<HTMLInputElement>(null)
     const [downloadButton, setDownloadButton] = useState<boolean>(false)
