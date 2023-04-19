@@ -109,31 +109,6 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
         }
     }
 
-    const hardReset = (fullReset?: boolean): void => {
-        if (canvas.current) {
-            const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
-            if (!cntx) {
-                console.error('Context is null');
-                return
-            }
-            cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
-            canvas.current.height = 150
-            canvas.current.width = 300
-        }
-        if (fileinput.current) fileinput.current.value = ''
-        fullReset && parrentReset && parrentReset()
-
-        setDownloadButton(() => false)
-
-        setGifFile(() => null)
-        setOptions(opt => ({
-            ...opt,
-            background: '#000000',
-            double: false,
-            brighter: false
-        }))
-    }
-
     const softReset = () => {
         setPreview && setPreview(null)
         setDownloadButton(() => false)
@@ -150,7 +125,7 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
-            <OptionsPanel options={options} setOptions={setOptions} GIF mutate={mutateGif} hardReset={hardReset} softReset={softReset} download={download} dlBtn={downloadButton} loading={loading} />
+            <OptionsPanel options={options} setOptions={setOptions} GIF mutate={mutateGif} softReset={softReset} download={download} dlBtn={downloadButton} loading={loading} />
         </div>
     )
 }

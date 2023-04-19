@@ -100,31 +100,6 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         }
     }
 
-    const hardReset = (): void => {
-        if (canvas.current) {
-            const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
-            if (!cntx) {
-                console.error('Context is null');
-                return
-            }
-            cntx.clearRect(0, 0, canvas.current.width, canvas.current.height)
-            canvas.current.height = 150
-            canvas.current.width = 300
-        }
-        parrentReset && parrentReset()
-        setDownloadButton(() => false)
-
-        setOptions(opt => ({
-            ...opt,
-            imgData: null,
-            background: null,
-            showText: false,
-            bluePrint: null,
-            double: false,
-            brighter: false
-        }))
-    }
-
     const softReset = () => {
         setPreview && setPreview(null)
         setDownloadButton(() => false)
@@ -143,7 +118,7 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
-            <OptionsPanel options={options} setOptions={setOptions} mutate={mutate} hardReset={hardReset} softReset={softReset} download={download} dlBtn={downloadButton} />
+            <OptionsPanel options={options} setOptions={setOptions} mutate={mutate} softReset={softReset} download={download} dlBtn={downloadButton} />
 
             {/* <div className='ascciContainer'>
                 {options.bluePrint && options.showText && options.bluePrint.map((string, i) => <p key={i}>{string}</p>)}
