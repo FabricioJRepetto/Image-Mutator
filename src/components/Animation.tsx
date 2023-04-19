@@ -11,13 +11,12 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
     const canvas = useRef<HTMLCanvasElement>(null)
     const fileinput = useRef<HTMLInputElement>(null)
     const [downloadButton, setDownloadButton] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
 
     const [gifFile, setGifFile] = useState<File | null>()
 
     useEffect(() => {
-        if (file) {
-            loadGif(file)
-        }
+        if (file) loadGif(file)
     }, [])
 
     const [options, setOptions] = useState<options>({
@@ -39,6 +38,9 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
     }
 
     const mutateGif = async (): Promise<void> => {
+        setLoading(() => true)
+        setTimeout(() => null, 0);
+
         const start = Date.now()
 
         if (!gifFile || !canvas.current) return
@@ -98,16 +100,16 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
 
             //? 7: set preview and download button
             if (buffer && setPreview) {
-                // const preview = finalSteps(buffer, gifFile.name + '_mutated', { type: 'image/gif' }, dlbutton.current)
                 setPreview(buffer)
                 setDownloadButton(() => true)
             }
 
             console.log(`Time elapsed: ${(Date.now() - start) / 1000}s`);
+            setLoading(() => false)
         }
     }
 
-    const reset = (): void => {
+    const hardReset = (fullReset?: boolean): void => {
         if (canvas.current) {
             const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
             if (!cntx) {
@@ -119,7 +121,7 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
             canvas.current.width = 300
         }
         if (fileinput.current) fileinput.current.value = ''
-        parrentReset && parrentReset()
+        fullReset && parrentReset && parrentReset()
 
         setDownloadButton(() => false)
 
@@ -132,17 +134,23 @@ const Animation = ({ file, setPreview, parrentReset }: mainComps): JSX.Element =
         }))
     }
 
+    const softReset = () => {
+        setPreview && setPreview(null)
+        setDownloadButton(() => false)
+
+        setOptions(opt => ({
+            ...opt,
+            background: '#000000',
+            double: false,
+            brighter: false
+        }))
+    }
+
     return (
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
-            <OptionsPanel options={options} setOptions={setOptions} GIF mutate={mutateGif} reset={reset} download={download} dlBtn={downloadButton} />
-
-            {/* <div className='buttons-container'>
-                <button onClick={mutateGif} disabled={!gifFile}>MUTATE GIF</button>
-                <button onClick={reset} >RESET</button>
-                {downloadButton && <button onClick={download}>DOWNLOAD</button>}
-            </div> */}
+            <OptionsPanel options={options} setOptions={setOptions} GIF mutate={mutateGif} hardReset={hardReset} softReset={softReset} download={download} dlBtn={downloadButton} loading={loading} />
         </div>
     )
 }

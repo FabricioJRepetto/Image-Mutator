@@ -100,7 +100,7 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         }
     }
 
-    const reset = (): void => {
+    const hardReset = (): void => {
         if (canvas.current) {
             const cntx = canvas.current.getContext('2d', { willReadFrequently: true })
             if (!cntx) {
@@ -125,22 +125,29 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         }))
     }
 
+    const softReset = () => {
+        setPreview && setPreview(null)
+        setDownloadButton(() => false)
+
+        setOptions(opt => ({
+            ...opt,
+            background: null,
+            showText: false,
+            bluePrint: null,
+            double: false,
+            brighter: false
+        }))
+    }
+
     return (
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
-            <OptionsPanel options={options} setOptions={setOptions} mutate={mutate} reset={reset} download={download} dlBtn={downloadButton} />
+            <OptionsPanel options={options} setOptions={setOptions} mutate={mutate} hardReset={hardReset} softReset={softReset} download={download} dlBtn={downloadButton} />
 
-            {/* <div className='buttons-container'>
-                <button onClick={mutate} disabled={!options.imgData}>MUTATE</button>
-                <button onClick={reset}>RESET</button>
-                {downloadButton && <button onClick={download}>DOWNLOAD</button>}
-            </div> */}
-
-
-            <div className='ascciContainer'>
+            {/* <div className='ascciContainer'>
                 {options.bluePrint && options.showText && options.bluePrint.map((string, i) => <p key={i}>{string}</p>)}
-            </div>
+            </div> */}
         </div>
     )
 }

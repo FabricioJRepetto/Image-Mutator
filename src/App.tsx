@@ -4,21 +4,18 @@ import { useEffect, useRef, useState } from 'react';
 import Blob from './components/Blob';
 import DragDrop from './components/DragDrop';
 import { finalSteps } from "./mutator/utils";
+import { boing } from './utils/Sound';
+import { RiCloseCircleFill, RiDropFill, RiBlurOffLine } from 'react-icons/ri';
 import './App.css'
-
-interface pvstyle {
-    width: string,
-    height: string
-}
 
 function App() {
     const [file, setFile] = useState<File | null>(null)
     const [mode, setMode] = useState<string | null>(null)
 
     const [ogpreview, setOgpreview] = useState<string | null>(null)
-    const [previewStyle, setPreviewStyle] = useState<pvstyle | null>(null)
     const [finalpreview, setFinalpreview] = useState<string | null>(null)
     const [inputArea, setInputArea] = useState<boolean>(false)
+    const [transparent, setTransparent] = useState<boolean>(false)
 
     const dlbutton = useRef<HTMLAnchorElement | null>(null)
     const fileinput = useRef<HTMLInputElement | null>(null)
@@ -28,6 +25,7 @@ function App() {
             const file = files[0]
             const preview = URL.createObjectURL(file)
             preview && setOgpreview(() => preview)
+            boing()
 
             setTimeout(() => {
                 setFile(file)
@@ -47,12 +45,16 @@ function App() {
         if (fileinput.current) setInputArea(true)
     }, [fileinput.current])
 
-    const previewHandler = (buffer: Blob) => {
+    const previewHandler = (buffer: Blob | null) => {
         if (dlbutton.current) {
-            const type = mode === 'image' ? 'image/png' : 'imate/gif'
-            const preview = finalSteps(buffer, 'mutated_' + file?.name, { type }, dlbutton.current)
+            if (buffer) {
+                const type = mode === 'image' ? 'image/png' : 'imate/gif'
+                const preview = finalSteps(buffer, 'mutated_' + file?.name, { type }, dlbutton.current)
 
-            setFinalpreview(preview)
+                setFinalpreview(preview)
+            } else {
+                setFinalpreview(null)
+            }
         }
     }
 
@@ -78,12 +80,17 @@ function App() {
                 {!ogpreview && inputArea &&
                     <DragDrop input={fileinput.current} load={loadfile} />}
 
-                {(ogpreview && !finalpreview) &&
-                    <img className={`og-preview`} style={previewStyle ? previewStyle : {}} src={ogpreview} />}
+                <div className='main-img-container'>
+                    {(ogpreview && !finalpreview) &&
+                        <img className={`og-preview ${transparent ? 'og-preview-transp' : ''}`} src={ogpreview} />}
 
-                {finalpreview && <>
-                    <img className={`og-preview`} src={finalpreview} />
-                </>}
+                    {finalpreview &&
+                        <img className={`og-preview ${transparent ? 'og-preview-transp' : ''}`} src={finalpreview} />}
+
+                    {mode === 'image' && (ogpreview || finalpreview) && <button onClick={() => setTransparent(t => !t)}>{transparent ? <RiBlurOffLine /> : <RiDropFill />}</button>}
+                    {(ogpreview || finalpreview) && <button onClick={reset}><RiCloseCircleFill /></button>}
+                </div>
+
                 <a ref={dlbutton} href='' id='download-anchor' style={{ display: 'none' }}>download</a>
 
             </section>

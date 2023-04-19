@@ -8,13 +8,13 @@ import LimitSize from './options/LimitSize'
 import DoublePass from './options/DoublePass'
 import Brigther from './options/Brigther'
 import FontSize from './options/FontSize'
+import { RiSaveFill, RiTestTubeFill, RiArrowGoBackFill, RiCloseCircleFill } from 'react-icons/ri';
+import { plop, smash } from '../utils/Sound'
 import "../range-input.css"
 
-import { RiSaveFill, RiTestTubeFill, RiArrowGoBackFill } from 'react-icons/ri';
-import { play } from './Sound'
-
-const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, download, dlBtn }: OptPanelProps): JSX.Element => {
+const OptionsPanel = ({ options, setOptions, GIF = false, mutate, softReset, download, dlBtn, loading }: OptPanelProps): JSX.Element => {
     const [RENDER, setRENDER] = useState<number>(0)
+
 
     const bgHandler = (value: string): void => {
         setOptions(opt => ({
@@ -34,7 +34,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
     }
 
     useEffect(() => {
-        dlBtn && play()
+        dlBtn && plop()
     }, [dlBtn])
 
     useEffect(() => {
@@ -45,17 +45,28 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
                 return i
             })
 
-            const ele = Array.from(document.getElementById('container')?.children as HTMLCollectionOf<HTMLElement>)
-            const angle = i - 4 >= 1 ? 1 : i - 4
-            if (ele[i - 1]) ele[i - 1].style.rotate = `${angle}deg`
+            if (true) {
+                const ele = Array.from(document.getElementById('container')?.children as HTMLCollectionOf<HTMLElement>)
+                const angle = i - 4 >= 1 ? 1 : i - 4
+                const margin = i < 5 ? i * 4 : 20 - (i * 4 - 20)
+                if (ele[i - 1]) {
+                    ele[i - 1].style.rotate = `${angle}deg`
+                    ele[i - 1].style.translate = `${margin}px`
+                }
+            }
 
             if (i >= 7) {
-                setTimeout(() => play(), 100);
+                plop()
                 clearInterval(inter)
                 return
             }
         }, 150)
     }, [])
+
+    const handleMutate = () => {
+        smash()
+        setTimeout(() => mutate(), 200);
+    }
 
     return (
         <div id='container' className='options-panel'>
@@ -69,10 +80,10 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, reset, downloa
             <Brigther options={options} setOptions={setOptions} />
 
             {RENDER >= 8 && <div className='buttons-container popIn'>
-                <div className='animate-mutate'>
-                    <button onClick={mutate}><RiTestTubeFill />MUTATE</button>
+                <div className={'animate-mutate'}>
+                    <button onClick={handleMutate}><RiTestTubeFill />{loading ? 'LOADING•••' : 'MUTATE'}</button>
                 </div>
-                <button onClick={reset}><RiArrowGoBackFill /></button>
+                <button onClick={softReset}><RiArrowGoBackFill /></button>
                 {dlBtn && <div className='animate-save'>
                     <button onClick={download}><RiSaveFill />DOWNLOAD</button>
                 </div>}

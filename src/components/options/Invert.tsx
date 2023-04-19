@@ -1,26 +1,34 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { OptPanelComp } from '../../types'
 import Checkbox from '../Checkbox';
-import { play } from '../Sound';
+import { plop } from '../../utils/Sound';
+import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
+
 
 const Invert = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
 
-    useEffect(() => play(), [])
+    const [state, setState] = useState<boolean>(false)
+
+    useEffect(() => plop(), [])
 
     const click = () => {
-        setOptions(opt => ({
-            ...opt,
-            invert: !opt.invert
-        }))
+        if (!options.double) {
+            setState(s => !s)
+            setOptions(opt => ({
+                ...opt,
+                invert: !opt.invert
+            }))
+        }
     }
 
     return (
-        <label htmlFor="invert">
-            <div className='OptPanelComp pointer'>Invert
-                <Checkbox id='invert' disabled={options.double} def={false} cb={click} />
+        <div className='OptPanelComp pointer' onClick={click}>
+            Invert
+            <div className={`checkbox-eye ${options.double ? 'disabled-eye' : ''}`} >
+                {state ? <RiEye2Line /> : <RiEyeCloseLine />}
             </div>
-        </label>
+        </div>
     )
 }
 

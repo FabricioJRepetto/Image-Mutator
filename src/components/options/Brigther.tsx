@@ -1,16 +1,22 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { OptPanelComp } from '../../types'
 import Checkbox from '../Checkbox'
-import { play } from '../Sound'
+import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri';
+
+import { plop } from '../../utils/Sound'
 
 const Brigther = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
 
+    const [state, setState] = useState<boolean>(false)
+    const [disabled, setDisabled] = useState<boolean>(false)
+
     useEffect(() => {
-        options.style !== 'ascii' && options.double && play()
+        options.style !== 'ascii' && options.double && plop()
     }, [options.style, options.double])
 
     const click = () => {
+        setState(s => !s)
         setOptions(opt => ({
             ...opt,
             brighter: !opt.brighter
@@ -18,9 +24,11 @@ const Brigther = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     }
 
     return (
-        <div className={(options.style === 'dots' && options.double) ? 'OptPanelComp' : 'hidden'}>
-            <label >Brighter </label>
-            <Checkbox id='brighter' disabled={false} def={false} cb={click} />
+        <div className={(options.style === 'dots' && options.double) ? 'OptPanelComp pointer' : 'hidden'} onClick={click}>
+            Brighter
+            <div className={`checkbox-eye ${disabled ? 'disabled-eye' : ''}`} >
+                {state ? <RiEye2Line /> : <RiEyeCloseLine />}
+            </div>
         </div>
     )
 }

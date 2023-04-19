@@ -56,6 +56,9 @@ button {
 button:hover {
   border-color: #2684bb;
 }
+button:active {
+    transform: translateY(4px);
+}
 
 @media (prefers-color-scheme: light) {
   :root {

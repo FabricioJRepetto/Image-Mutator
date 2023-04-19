@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { OptPanelComp } from '../../types'
-import { play } from '../Sound'
+import { plop } from '../../utils/Sound'
+import { RiCloseCircleFill } from 'react-icons/ri';
 
 const Background = ({ options, setOptions, bgHandler, GIF }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
     if (!bgHandler) return <>error: cb</>
 
-    useEffect(() => play(), [])
+    useEffect(() => plop(), [])
 
     return (
         <div className='OptPanelComp'>
@@ -16,7 +17,7 @@ const Background = ({ options, setOptions, bgHandler, GIF }: OptPanelComp): JSX.
             {!GIF && <div className='transparent' onClick={() => setOptions(opt => ({
                 ...opt,
                 background: null
-            }))}>❌</div>}
+            }))}><RiCloseCircleFill /></div>}
         </div>
     )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { OptPanelComp } from '../../types'
 import "../../range-input.css"
-import { play } from '../Sound'
+import { plop } from '../../utils/Sound'
 
 const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
@@ -14,7 +14,7 @@ const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     }
 
     useEffect(() => {
-        options.style === 'ascii' && play()
+        options.style === 'ascii' && plop()
     }, [options.style])
 
     useEffect(() => {

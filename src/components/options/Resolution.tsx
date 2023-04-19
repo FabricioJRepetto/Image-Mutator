@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { OptPanelComp } from '../../types'
 import "../../range-input.css"
-import { play } from '../Sound'
+import { plop } from '../../utils/Sound'
 
 const Resolution = ({ options, setOptions }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
@@ -13,7 +13,7 @@ const Resolution = ({ options, setOptions }: OptPanelComp): JSX.Element => {
         e && e.style.setProperty('--value', e.value)
     }
 
-    useEffect(() => play(), [])
+    useEffect(() => plop(), [])
 
     useEffect(() => {
         if (resinput.current) {

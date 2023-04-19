@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { OptPanelComp } from '../../types'
-import { play } from '../Sound'
+import { plop } from '../../utils/Sound'
 
 const Style = ({ setOptions }: OptPanelComp): JSX.Element => {
-    useEffect(() => play(), [])
+    useEffect(() => plop(), [])
 
     return (
         <div className='OptPanelComp'>Style

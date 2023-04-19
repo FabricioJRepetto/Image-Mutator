@@ -44,7 +44,7 @@ export interface options {
 
 export interface mainComps {
     file: File | null,
-    setPreview: (buffer: Blob) => void,
+    setPreview: (buffer: Blob | null) => void,
     parrentReset: VoidFunction
 }
 
@@ -53,9 +53,10 @@ export interface OptPanelProps {
     setOptions: React.Dispatch<React.SetStateAction<options>>,
     GIF?: boolean,
     mutate: () => void,
-    reset: () => void,
+    softReset: () => void,
     dlBtn: boolean,
-    download: () => void
+    download: () => void,
+    loading?: boolean
 }
 
 export interface OptPanelComp {
