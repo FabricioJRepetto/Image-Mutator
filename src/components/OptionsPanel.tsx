@@ -45,7 +45,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, softReset, dow
                 return i
             })
 
-            if (true) {
+            if (window.innerWidth > 1280) {
                 const ele = Array.from(document.getElementById('container')?.children as HTMLCollectionOf<HTMLElement>)
                 const angle = i - 4 >= 1 ? 1 : i - 4
                 const margin = i < 5 ? i * 4 : 20 - (i * 4 - 20)

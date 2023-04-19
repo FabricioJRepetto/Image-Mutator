@@ -48,7 +48,7 @@ const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
             <button onClick={() => setOptions(opt => ({
                 ...opt,
                 showText: !opt.showText
-            }))} disabled={!options.bluePrint} className='popIn'>SHOW TEXT</button>
+            }))} disabled={!options.bluePrint} className='popIn'>show text (experimental)</button>
         </div>
     )
 }

@@ -44,8 +44,7 @@ export interface options {
 
 export interface mainComps {
     file: File | null,
-    setPreview: (buffer: Blob | null) => void,
-    parrentReset: VoidFunction
+    setPreview: (buffer: Blob | null) => void
 }
 
 export interface OptPanelProps {

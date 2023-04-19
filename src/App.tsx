@@ -99,8 +99,8 @@ function App() {
             <section className={`controllers-container ${mode ? 'controllers-open' : ''}`}>
                 {mode
                     ? mode === 'image'
-                        ? <Image file={file} setPreview={previewHandler} parrentReset={reset} />
-                        : <Animation file={file} setPreview={previewHandler} parrentReset={reset} />
+                        ? <Image file={file} setPreview={previewHandler} />
+                        : <Animation file={file} setPreview={previewHandler} />
                     : null}
             </section>
         </div>

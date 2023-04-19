@@ -8,7 +8,7 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #e7d5b9;
-
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -94,4 +94,21 @@ input[typoe=radio] {
     appearance: none;
     -webkit-appearance: none;
     background-color: #e7d5b9;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e7d5b9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #79b03b;
+    width: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #90d442;
 }

@@ -4,9 +4,10 @@ import { scanner } from '../mutator/scanner'
 import { printer } from '../mutator/printer'
 import { download } from '../mutator/utils'
 import OptionsPanel from './OptionsPanel'
+import { RiCloseCircleFill } from 'react-icons/ri';
 import '../App.css'
 
-const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
+const Image = ({ file, setPreview }: mainComps): JSX.Element => {
     const canvas = useRef<HTMLCanvasElement>(null)
     const [downloadButton, setDownloadButton] = useState<boolean>(false)
 
@@ -114,15 +115,23 @@ const Image = ({ file, setPreview, parrentReset }: mainComps): JSX.Element => {
         }))
     }
 
+    const closeTextContainer = (): void => {
+        setOptions(opt => ({
+            ...opt,
+            showText: false
+        }))
+    }
+
     return (
         <div className='main-component'>
             <canvas ref={canvas} className='canvas'></canvas>
 
             <OptionsPanel options={options} setOptions={setOptions} mutate={mutate} softReset={softReset} download={download} dlBtn={downloadButton} />
 
-            {/* <div className='ascciContainer'>
-                {options.bluePrint && options.showText && options.bluePrint.map((string, i) => <p key={i}>{string}</p>)}
-            </div> */}
+            {options.showText && <div className='asciiContainer'>
+                <button onClick={closeTextContainer}><RiCloseCircleFill /></button>
+                {options.bluePrint && options.bluePrint.map((string, i) => <p key={i}>{string}</p>)}
+            </div>}
         </div>
     )
 }

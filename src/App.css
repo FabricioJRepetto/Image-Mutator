@@ -22,7 +22,8 @@
 .main-img-container {
     position: relative;
 }
-.main-img-container > button {
+.main-img-container > button,
+.asciiContainer > button {
     background-color: #0000005e;
     border: none;
     border-radius: 50%;
@@ -42,10 +43,12 @@
     bottom: -2.75rem;
     right: 1rem;
 }
-.main-img-container > button:hover {
+.main-img-container > button:hover, 
+.asciiContainer > button:hover {
     opacity: 1;
 }
-.main-img-container > button svg {
+.main-img-container > button svg,
+.asciiContainer > button svg {
     min-width: 1rem;
     scale: 1.5;
     rotate: -5deg;
@@ -64,7 +67,6 @@
 .controllers-open {
     width: 30vw;
     max-width: 20rem;
-    /* border: #158830 1px solid; */
 }
 
 .main-component {
@@ -72,7 +74,6 @@
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    /* margin: 4rem 1rem 0 1rem; */
 }
 
 .App-header {
@@ -117,21 +118,39 @@
     max-height: 80vh; */
 }
 
-.ascciContainer {
-    margin: 2em 0;
+.asciiContainer {
+    /* margin: 2em 0; */
     height: fit-content;
     width: fit-content;
+    max-height: 90vh;
+    max-width: 90vw;
     font-family: 'Courier Prime', monospace;
     line-height: 0%;
     letter-spacing: .1em;
-    font-size: 1.2em;
+    /* font-size: 1.2em; */
     word-wrap: break-word;
     overflow: auto;
+    position: absolute;
+    inset: 2rem 0% 0% 0%;
+    
+    padding: 1rem;
+    font-size: clamp(.3vw, .65vw, .9vw);
+    border: #f9a31d 4px dashed;
+    border-radius: 1rem;
+    background-color: #212121;
 }
 
-.ascciContainer>p {
+.asciiContainer>p {
     margin-top: 0;
     margin-bottom: 0.7em;
+}
+.asciiContainer > button {
+    bottom: unset;
+    top: 2.75;
+    right: 1rem;
+    color: #d5472c;
+    font-size: .8rem;
+    scale: 1.5;
 }
 
 .navbar {
@@ -181,6 +200,7 @@
 
 .OptPanelComp {
     min-width: fit-content;
+    /* width: 100%; */
     border-radius: 1.5rem;
     background-color: #d5472c;
     padding: 1rem;
@@ -489,4 +509,22 @@
 .disabled-eye {
     color: #e7d5b999;
     cursor: default;
+}
+
+@media (max-width: 1280px) {
+    .App {
+        flex-direction: column;
+    }
+    .main-container {
+        margin-top: 6rem;
+    }
+    .controllers-open {
+        width: auto;
+        max-width: none;
+    }
+    .controllers-open {
+        margin-top: 4rem;
+        width: 90vw;
+        max-width: 30rem;
+    }
 }
