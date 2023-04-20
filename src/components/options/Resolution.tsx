@@ -29,7 +29,7 @@ const Resolution = ({ options, setOptions }: OptPanelComp): JSX.Element => {
 
     return (
         <div className='OptPanelComp resolution-div'>
-            <label htmlFor="range">Resolution {options.res}{options.imgData && <i> ({Math.ceil(options.imgData.width / options.res)} per row)</i>}</label>
+            <label htmlFor="range">Threshold {options.res}{options.imgData && <i> ({Math.ceil(options.imgData.width / options.res)} per row)</i>}</label>
             <input ref={resinput} type="range" min={2} max={15} defaultValue={5} className="resolution styled-slider slider-progress" onChange={(e) => setOptions(opt => ({
                 ...opt,
                 res: parseInt(e.target.value)
