@@ -84,7 +84,7 @@ const Image = ({ file, setPreview }: mainComps): JSX.Element => {
         if (data && canvas.current) {
             if (options.double && options.style === 'dots') {
                 // dark tones
-                await printer(canvas.current, data, { ...config, invert: true, containedDots: true }, () => null)
+                await printer(canvas.current, data, { ...config, invert: true, containedDots: true }, () => null, true)
 
                 // bright tones
                 await printer(canvas.current, data, { ...config, invert: false, containedDots: !options.brighter, background: null }, () => null, true)
