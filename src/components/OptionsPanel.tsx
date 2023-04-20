@@ -74,7 +74,7 @@ const OptionsPanel = ({ options, setOptions, GIF = false, mutate, softReset, dow
             {RENDER >= 2 && <Resolution options={options} setOptions={setOptions} />}
             {RENDER >= 3 && <Background options={options} setOptions={setOptions} bgHandler={bgHandler} GIF={GIF} />}
             {RENDER >= 4 && <Invert options={options} setOptions={setOptions} />}
-            <FontSize options={options} setOptions={setOptions} />
+            <FontSize options={options} setOptions={setOptions} GIF={GIF} />
             {RENDER >= 5 && <LimitSize options={options} setOptions={setOptions} />}
             {RENDER >= 6 && <DoublePass options={options} setOptions={setOptions} GIF={GIF} />}
             <Brigther options={options} setOptions={setOptions} />

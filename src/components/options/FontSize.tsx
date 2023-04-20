@@ -3,7 +3,7 @@ import { OptPanelComp } from '../../types'
 import "../../range-input.css"
 import { plop } from '../../utils/Sound'
 
-const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
+const FontSize = ({ options, setOptions, GIF }: OptPanelComp): JSX.Element => {
     if (!options) return <>error: no options</>
 
     const fontinput = useRef<HTMLInputElement | null>(null)
@@ -45,10 +45,10 @@ const FontSize = ({ options, setOptions }: OptPanelComp): JSX.Element => {
                 <p>Font size: <i>{options.fontSize}</i></p>
                 <input ref={fontinput} type="range" min={1} max={19} defaultValue={10} className='resolution styled-slider slider-progress' onChange={(e) => fontSizeHandler(e.target.value)}></input>
             </div>
-            <button onClick={() => setOptions(opt => ({
+            {!GIF && <button onClick={() => setOptions(opt => ({
                 ...opt,
                 showText: !opt.showText
-            }))} disabled={!options.bluePrint} className='popIn'>show text (experimental)</button>
+            }))} disabled={!options.bluePrint} className='popIn'>show text (experimental)</button>}
         </div>
     )
 }
